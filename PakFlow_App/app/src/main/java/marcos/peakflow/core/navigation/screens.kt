@@ -1,0 +1,18 @@
+package marcos.peakflow.core.navigation
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+object Login
+
+@Serializable
+object Initial
+
+@Serializable
+object Signup
+
+@Serializable
+object RegisterWithEmail
+
+@Serializable
+object LoginWithEmail
