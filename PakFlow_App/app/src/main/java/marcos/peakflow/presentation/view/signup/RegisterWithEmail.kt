@@ -30,27 +30,30 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import androidx.lifecycle.ViewModel
 import marcos.peakflow.R
+import marcos.peakflow.presentation.theme.Black
+import marcos.peakflow.presentation.theme.Gray
+import marcos.peakflow.presentation.theme.RedPeakFlow
+import marcos.peakflow.presentation.theme.ShapeButton
 import marcos.peakflow.presentation.viewModel.signup.SignUpWithEmailViewModel
-import marcos.peakflow.ui.theme.*
-import java.sql.Date
+import java.util.Date
+import java.util.Locale
 
 
 @Composable
 fun RegisterWithEmailScreen(
     viewModel: SignUpWithEmailViewModel,
-    navigateToSignup: () -> Unit
+    navigateToSignup: () -> Unit,
+    navigateToHome: () -> Unit
 ){
 
-    val userName = remember { mutableStateOf("") }
+    val userName : String by viewModel.userName.observeAsState(initial = "")
     val email : String by viewModel.email.observeAsState(initial = "")
-    val password = remember { mutableStateOf("") }
-    val password2 = remember { mutableStateOf("") }
-    var birthDate by remember { mutableStateOf<Date?>(null) }
-    var selectedGender by remember { mutableStateOf<String?>(null) }
-
-
+    val password1 : String by viewModel.password1.observeAsState(initial = "")
+    val password2 : String by viewModel.password2.observeAsState(initial = "")
+    val birthDate : Date? by viewModel.birthDate.observeAsState(initial = null)
+    val gender : String by viewModel.gender.observeAsState(initial = "")
+    val registerEnable : Boolean by viewModel.registerEnable.observeAsState(initial = false)
 
 
     Column(
@@ -81,8 +84,8 @@ fun RegisterWithEmailScreen(
         //CAMPO DE USERNAME
         MakeText(R.string.userNameRegisterValue, modifier = Modifier.align(Alignment.Start))
         CustomTextField(
-            value = userName.value,
-            onValueChange = {userName.value = it},
+            value = userName,
+            onValueChange = {viewModel.onRegisterChanged(it, email, password1, password2, birthDate , gender)},
             placeholder = stringResource(R.string.placeholderRegisterScreen),
             keyboardType = KeyboardType.Text
         )
@@ -92,7 +95,7 @@ fun RegisterWithEmailScreen(
         MakeText(R.string.emailRegisterValue, modifier = Modifier.align(Alignment.Start))
         CustomTextField(
             value = email,
-            onValueChange = {email},
+            onValueChange = {viewModel.onRegisterChanged(userName, it, password1, password2, birthDate , gender)},
             placeholder = stringResource(R.string.placeholderRegisterScreen),
             keyboardType = KeyboardType.Email
         )
@@ -101,8 +104,8 @@ fun RegisterWithEmailScreen(
         //CAMPO DE CONTRASEÑA
         MakeText(R.string.passwordRegisterValue, modifier = Modifier.align(Alignment.Start))
         PasswordTextField(
-            value = password.value,
-            onValueChange = {password.value = it},
+            value = password1,
+            onValueChange = {viewModel.onRegisterChanged(userName, email, it, password2, birthDate , gender)},
             placeholder = stringResource(R.string.placeholderRegisterScreen),
         )
         Spacer(modifier = Modifier.height(40.dp))
@@ -110,8 +113,8 @@ fun RegisterWithEmailScreen(
         //CAMPO DE REPETIR CONTRASEÑA
         MakeText(R.string.passwordRegisterValue2, modifier = Modifier.align(Alignment.Start))
         PasswordTextField(
-            value = password2.value,
-            onValueChange = {password2.value = it},
+            value = password2,
+            onValueChange = {viewModel.onRegisterChanged(userName, email, password1, it, birthDate , gender)},
             placeholder = stringResource(R.string.placeholderRegisterScreen),
         )
         Spacer(modifier = Modifier.height(40.dp))
@@ -120,36 +123,22 @@ fun RegisterWithEmailScreen(
         MakeText(R.string.birthdayRegisterValue2, modifier = Modifier.align(Alignment.Start))
         DatePickerDocked(
             selectedDate = birthDate,
-            onDateSelected = { newDate -> birthDate = newDate }
+            onDateSelected = { viewModel.onRegisterChanged(userName, email, password1, password2, it , gender) }
         )
         Spacer(modifier = Modifier.height(40.dp))
 
         //CAMPO SEXO
         MakeText(R.string.sexoRegisterValue, modifier = Modifier.align(Alignment.Start))
         GenderDropdownSelector(
-            selectedOption = selectedGender,
-            onOptionSelected = { gender -> selectedGender = gender },
+            selectedOption = gender,
+            onOptionSelected = { viewModel.onRegisterChanged(userName, email, password1, password2, birthDate , it) },
         )
         Spacer(modifier = Modifier.height(40.dp))
 
-        //Boton de REGISTRO
-        Button(
-            onClick = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(50.dp),
-            colors = ButtonDefaults.buttonColors(RedPeakFlow)
-        ) {
-            Text(
-                text = stringResource(R.string.IniciaSesion),
-                color = Black,
-                fontSize = 15.sp
-            )
+        LoginButton(registerEnable) {
+            viewModel.onRegisterSelected()
         }
         Spacer(modifier = Modifier.height(40.dp))
-
-
-
     }
 }
 
@@ -193,7 +182,7 @@ private fun CustomTextField(
 
     TextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = {onValueChange(it)},
         modifier = Modifier
             .height(55.dp)
             .height(55.dp)
@@ -232,7 +221,7 @@ fun PasswordTextField(
 
     OutlinedTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = {onValueChange(it)},
         modifier = Modifier
             .height(55.dp)
             .size(300.dp),
@@ -285,16 +274,15 @@ fun PasswordTextField(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerDocked(
-    selectedDate: Date?,            //parámetro: fecha seleccionada externamente
-    onDateSelected: (Date) -> Unit   //parámetro: callback para selección
+    selectedDate: Date?,
+    onDateSelected: (Date?) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
-    // Estado del DatePicker inicializado con la fecha externa
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = selectedDate?.time
     )
 
-    // Convertir la fecha seleccionada a String para mostrar
+    // Conversión a texto para mostrar
     val selectedDateText = selectedDate?.let { convertMillisToDate(it.time) } ?: ""
 
     Box(
@@ -304,10 +292,10 @@ fun DatePickerDocked(
     ) {
         OutlinedTextField(
             value = selectedDateText,
-            onValueChange = { },
+            onValueChange = {},// No se necesita para campo de solo lectura
             readOnly = true,
             trailingIcon = {
-                IconButton(onClick = { showDatePicker = !showDatePicker }) {
+                IconButton(onClick = { showDatePicker = true }) {
                     Icon(
                         imageVector = Icons.Default.DateRange,
                         contentDescription = "Select date",
@@ -315,8 +303,7 @@ fun DatePickerDocked(
                     )
                 }
             },
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = Gray,
                 focusedContainerColor = ShapeButton
@@ -339,12 +326,11 @@ fun DatePickerDocked(
                         showModeToggle = false
                     )
 
-                    // Botón de confirmación para aplicar la selección
                     Button(
                         onClick = {
-                            datePickerState.selectedDateMillis?.let {
-                                onDateSelected(Date(it))
-                            }
+                            // Maneja correctamente valores nulos
+                            val newDate = datePickerState.selectedDateMillis?.let { Date(it) }
+                            onDateSelected(newDate)
                             showDatePicker = false
                         },
                         modifier = Modifier.align(Alignment.BottomEnd)
@@ -359,10 +345,9 @@ fun DatePickerDocked(
 
 // Función de conversión (sin cambios)
 fun convertMillisToDate(millis: Long): String {
-    val formatter = SimpleDateFormat("MM/dd/yyyy", java.util.Locale.getDefault())
+    val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
     return formatter.format(Date(millis))
 }
-
 
 
 /**
@@ -396,7 +381,7 @@ fun GenderDropdownSelector(
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
-        modifier =Modifier
+        modifier = Modifier
             .padding(16.dp)
             .padding(horizontal = 30.dp)
     ) {
@@ -404,7 +389,7 @@ fun GenderDropdownSelector(
         OutlinedTextField(
             readOnly = true,
             value = displayText,
-            onValueChange = {},
+            onValueChange = { onOptionSelected(it) },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
@@ -433,5 +418,30 @@ fun GenderDropdownSelector(
                 )
             }
         }
+    }
+}
+
+
+/**
+ * Botón de registro
+ * @param Boolean: registerEnable- Indica si se cumplen todas las condiciones para poder logearse
+ * @param Unit: onRegisterselected: Envia una funcion Lambda con lo que tiene que hacer el boton al ser clicado
+ */
+@Composable
+fun LoginButton(registerEnable: Boolean, onRegisterSelected: () -> Unit) {
+    //Boton de REGISTRO
+    Button(
+        onClick = {onRegisterSelected},
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(50.dp),
+        colors = ButtonDefaults.buttonColors(RedPeakFlow),
+        enabled = registerEnable
+    ) {
+        Text(
+            text = stringResource(R.string.IniciaSesion),
+            color = Black,
+            fontSize = 15.sp
+        )
     }
 }

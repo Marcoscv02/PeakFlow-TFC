@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -30,18 +31,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import marcos.peakflow.R
 import marcos.peakflow.presentation.viewModel.login.LoginWithEmailViewModel
-import marcos.peakflow.ui.theme.Black
-import marcos.peakflow.ui.theme.Gray
-import marcos.peakflow.ui.theme.RedPeakFlow
-import marcos.peakflow.ui.theme.ShapeButton
+import marcos.peakflow.presentation.theme.Black
+import marcos.peakflow.presentation.theme.Gray
+import marcos.peakflow.presentation.theme.RedPeakFlow
+import marcos.peakflow.presentation.theme.ShapeButton
 
 @Composable
 fun LoginWithEmailScreen(
     viewModel: LoginWithEmailViewModel,
-    navigateToLogin: () -> Unit
+    navigateToLogin: () -> Unit,
+    navigateToHome: () -> Unit
 ){
-    val userNameOrEmail = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
+    val userNameOrEmail : String by viewModel.userNameOrEmail.observeAsState(initial = "")
+    val password : String by viewModel.password.observeAsState(initial = "")
 
 
     Column(
@@ -74,8 +76,8 @@ fun LoginWithEmailScreen(
         //CAMPO DE USERNAME O EMAIL
         MakeText(R.string.userNameOrEmail, modifier = Modifier.align(Alignment.Start))
         CustomTextField(
-            value = userNameOrEmail.value,
-            onValueChange = { userNameOrEmail.value = it },
+            value = userNameOrEmail,
+            onValueChange = { viewModel.onLoginChanged(it,password)},
             placeholder = stringResource(R.string.placeholderRegisterScreen),
             keyboardType = KeyboardType.Text
         )
@@ -88,8 +90,8 @@ fun LoginWithEmailScreen(
             modifier = Modifier.align(Alignment.Start)
         )
         PasswordTextField(
-            value = password.value,
-            onValueChange = { password.value = it },
+            value = password,
+            onValueChange = { viewModel.onLoginChanged(userNameOrEmail, it) },
             placeholder = stringResource(R.string.placeholderRegisterScreen),
         )
         Text(
@@ -105,19 +107,7 @@ fun LoginWithEmailScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         //Boton de REGISTRO
-        Button(
-            onClick = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(50.dp),
-            colors = ButtonDefaults.buttonColors(RedPeakFlow)
-        ) {
-            Text(
-                text = stringResource(R.string.IniciaSesion),
-                color = Black,
-                fontSize = 15.sp
-            )
-        }
+        LoginButton(true) { }
         Spacer(modifier = Modifier.height(40.dp))
     }
 }
@@ -243,5 +233,31 @@ fun PasswordTextField(
             }
         },
     )
+}
+
+
+
+/**
+ * Botón de Inicio de sesion
+ * @param Boolean: loginEnable- Indica si se cumplen todas las condiciones para poder logearse
+ * @param Unit: onRegisterselected: Envia una función Lambda con lo que tiene que hacer el botón al ser clicado
+ */
+@Composable
+fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit) {
+    //Boton de REGISTRO
+    Button(
+        onClick = {onLoginSelected},
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(50.dp),
+        colors = ButtonDefaults.buttonColors(RedPeakFlow),
+        enabled = loginEnable
+    ) {
+        Text(
+            text = stringResource(R.string.IniciaSesion),
+            color = Black,
+            fontSize = 15.sp
+        )
+    }
 }
 

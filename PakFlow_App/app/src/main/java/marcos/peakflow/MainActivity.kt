@@ -12,7 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import marcos.peakflow.core.navigation.NavigationWrapper
-import marcos.peakflow.ui.theme.PeakFlowTheme
+import marcos.peakflow.presentation.theme.PeakFlowTheme
 
 class MainActivity : ComponentActivity() {
 

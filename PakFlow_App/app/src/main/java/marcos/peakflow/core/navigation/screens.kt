@@ -16,3 +16,6 @@ object RegisterWithEmail
 
 @Serializable
 object LoginWithEmail
+
+@Serializable
+object  Home

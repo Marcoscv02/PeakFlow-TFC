@@ -22,6 +22,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import marcos.peakflow.R
+import marcos.peakflow.presentation.theme.BackgroundButton
+import marcos.peakflow.presentation.theme.Black
+import marcos.peakflow.presentation.theme.RedPeakFlow
+import marcos.peakflow.presentation.theme.ShapeButton
 import marcos.peakflow.ui.theme.*
 
 

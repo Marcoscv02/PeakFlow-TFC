@@ -54,6 +54,7 @@ fun NavigationWrapper() {
                 LoginWithEmailScreen(
                     LoginWithEmailViewModel(),
                     navigateToLogin = {navController.popBackStack()},
+                    navigateToHome =  {navController.navigate(Home)}
                 )
             }
 
@@ -61,8 +62,10 @@ fun NavigationWrapper() {
                 RegisterWithEmailScreen(
                     SignUpWithEmailViewModel(),
                     navigateToSignup = {navController.popBackStack()},
+                    navigateToHome =  {navController.navigate(Home)}
                 )
             }
+
 
 
         }
