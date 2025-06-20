@@ -394,7 +394,6 @@ fun GenderDropdownSelector(
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
             modifier = Modifier
-                .menuAnchor()
                 .fillMaxWidth(),
             placeholder = { Text(text = stringResource(R.string.sexoRegisterValue), color = ShapeButton) },
             colors = TextFieldDefaults.colors(

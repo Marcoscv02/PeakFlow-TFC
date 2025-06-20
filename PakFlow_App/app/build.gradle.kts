@@ -57,7 +57,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.svg)
     implementation(libs.androidx.espresso.core)
-    implementation(libs.androidx.animation.core.lint)
     implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -68,12 +67,16 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // Supabase (Kotlin SDK)
-    implementation(libs.postgrest.kt)
-    implementation(libs.realtime.kt)
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.supabase.auth)
+    implementation(libs.supabase.postgrest)
+    implementation(libs.supabase.realtime)
 
     // Serialización (JSON)
     implementation(libs.kotlinx.serialization.json)
 
     // Ktor (Networking)
-    implementation(libs.ktor.client.cio)
+    implementation("io.ktor:ktor-client-android:2.3.9")
+
+
 }
