@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import marcos.peakflow.presentation.view.home.HomeScreen
 import marcos.peakflow.presentation.view.initial.InitialScreen
 import marcos.peakflow.presentation.view.login.LoginScreen
 import marcos.peakflow.presentation.view.login.LoginWithEmailScreen
@@ -64,6 +65,10 @@ fun NavigationWrapper() {
                     navigateToSignup = {navController.popBackStack()},
                     navigateToHome =  {navController.navigate(Home)}
                 )
+            }
+
+            composable<Home> {
+                HomeScreen()
             }
 
 

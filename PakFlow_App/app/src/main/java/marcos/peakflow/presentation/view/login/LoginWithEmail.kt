@@ -77,7 +77,7 @@ fun LoginWithEmailScreen(
         MakeText(R.string.userNameOrEmail, modifier = Modifier.align(Alignment.Start))
         CustomTextField(
             value = userNameOrEmail,
-            onValueChange = { viewModel.onLoginChanged(it,password)},
+            onValueChange = { viewModel.OnLoginChanged(it,password)},
             placeholder = stringResource(R.string.placeholderRegisterScreen),
             keyboardType = KeyboardType.Text
         )
@@ -91,7 +91,7 @@ fun LoginWithEmailScreen(
         )
         PasswordTextField(
             value = password,
-            onValueChange = { viewModel.onLoginChanged(userNameOrEmail, it) },
+            onValueChange = { viewModel.OnLoginChanged(userNameOrEmail, it) },
             placeholder = stringResource(R.string.placeholderRegisterScreen),
         )
         Text(
@@ -107,7 +107,7 @@ fun LoginWithEmailScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         //Boton de REGISTRO
-        LoginButton(true) { }
+        LoginButton(true) { viewModel.OnLoginSelected() }
         Spacer(modifier = Modifier.height(40.dp))
     }
 }
@@ -243,10 +243,10 @@ fun PasswordTextField(
  * @param Unit: onRegisterselected: Envia una función Lambda con lo que tiene que hacer el botón al ser clicado
  */
 @Composable
-fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit) {
+fun LoginButton(loginEnable: Boolean, OnLoginSelected: () -> Unit) {
     //Boton de REGISTRO
     Button(
-        onClick = {onLoginSelected},
+        onClick = {OnLoginSelected},
         modifier = Modifier
             .fillMaxWidth()
             .padding(50.dp),

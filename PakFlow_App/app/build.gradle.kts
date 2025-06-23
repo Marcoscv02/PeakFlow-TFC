@@ -76,7 +76,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     // Ktor (Networking)
-    implementation("io.ktor:ktor-client-android:2.3.9")
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.core)
 
 
 }

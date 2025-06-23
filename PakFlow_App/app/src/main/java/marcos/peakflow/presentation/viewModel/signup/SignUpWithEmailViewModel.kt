@@ -4,9 +4,12 @@ import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlinx.datetime.LocalDate
 import java.util.Date
 
-class SignUpWithEmailViewModel : ViewModel () {
+class SignUpWithEmailViewModel : ViewModel (
+
+) {
 
     private val _userName = MutableLiveData<String>()
     val userName :LiveData<String> = _userName
@@ -20,10 +23,10 @@ class SignUpWithEmailViewModel : ViewModel () {
     private val _password2 = MutableLiveData<String>()
     val password2 : LiveData<String> = _password2
 
-    private val _birthDate = MutableLiveData<Date?>(null)
-    val birthDate : LiveData<Date?> = _birthDate
+    private val _birthDate = MutableLiveData<LocalDate?>(null)
+    val birthDate : LiveData<LocalDate?> = _birthDate
 
-    fun updateBirthDate(date: Date?) {
+    fun updateBirthDate(date: LocalDate?) {
         _birthDate.value = date
     }
 
@@ -41,7 +44,7 @@ class SignUpWithEmailViewModel : ViewModel () {
     private fun isValidPassword(password1: String, password2: String): Boolean  = password1.equals(password2)
 
 
-    fun onRegisterChanged (userName:String, email:String, password1:String, password2:String, birthDate:Date?, gender: String){
+    fun onRegisterChanged (userName:String, email:String, password1:String, password2:String, birthDate:LocalDate?, gender: String){
         _userName.value = userName
         _email.value = email
         _password1.value = password1

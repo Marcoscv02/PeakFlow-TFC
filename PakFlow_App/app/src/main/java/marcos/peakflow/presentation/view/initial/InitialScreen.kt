@@ -32,8 +32,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import marcos.peakflow.R
 import marcos.peakflow.SupabaseClient
-import marcos.peakflow.SupabaseClient.supabase
-import marcos.peakflow.data.User
 import marcos.peakflow.presentation.theme.BackgroundButton
 import marcos.peakflow.presentation.theme.Black
 import marcos.peakflow.presentation.theme.Gray
@@ -113,33 +111,6 @@ fun InitialScreen(
             color = Color.White
         )
         Spacer(modifier = Modifier.height(20.dp))
-        UserList()
-    }
-}
 
-
-@Composable
-fun UserList() {
-    var users by remember { mutableStateOf(emptyList<User>()) }
-
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) {
-            users = SupabaseClient.supabase  // ✅ Accede a la instancia real
-                .from("user")
-                .select()
-                .decodeList<User>()
-        }
-    }
-
-    LazyColumn {
-        items(
-            items = users,
-            key = { user -> user.id },
-        ) { user ->
-            Text(
-                text = user.name,
-                modifier = Modifier.padding(8.dp),
-            )
-        }
     }
 }

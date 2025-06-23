@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import kotlinx.datetime.LocalDate
 import marcos.peakflow.R
 import marcos.peakflow.presentation.theme.Black
 import marcos.peakflow.presentation.theme.Gray
@@ -51,7 +52,7 @@ fun RegisterWithEmailScreen(
     val email : String by viewModel.email.observeAsState(initial = "")
     val password1 : String by viewModel.password1.observeAsState(initial = "")
     val password2 : String by viewModel.password2.observeAsState(initial = "")
-    val birthDate : Date? by viewModel.birthDate.observeAsState(initial = null)
+    val birthDate : LocalDate? by viewModel.birthDate.observeAsState(initial = null)
     val gender : String by viewModel.gender.observeAsState(initial = "")
     val registerEnable : Boolean by viewModel.registerEnable.observeAsState(initial = false)
 
@@ -274,8 +275,8 @@ fun PasswordTextField(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerDocked(
-    selectedDate: Date?,
-    onDateSelected: (Date?) -> Unit
+    selectedDate: LocalDate?,
+    onDateSelected: (LocalDate?) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
@@ -394,6 +395,7 @@ fun GenderDropdownSelector(
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
             modifier = Modifier
+                .menuAnchor()
                 .fillMaxWidth(),
             placeholder = { Text(text = stringResource(R.string.sexoRegisterValue), color = ShapeButton) },
             colors = TextFieldDefaults.colors(
