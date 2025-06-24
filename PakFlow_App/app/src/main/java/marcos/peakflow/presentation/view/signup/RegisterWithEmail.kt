@@ -1,6 +1,6 @@
 package marcos.peakflow.presentation.view.signup
 
-import android.icu.text.SimpleDateFormat
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -21,6 +21,7 @@ import androidx.compose.ui.autofill.ContentDataType.Companion.Date
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.*
@@ -30,15 +31,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import kotlinx.datetime.LocalDate
+import kotlinx.datetime.*
 import marcos.peakflow.R
-import marcos.peakflow.presentation.theme.Black
+import marcos.peakflow.presentation.theme.*
 import marcos.peakflow.presentation.theme.Gray
-import marcos.peakflow.presentation.theme.RedPeakFlow
-import marcos.peakflow.presentation.theme.ShapeButton
 import marcos.peakflow.presentation.viewModel.signup.SignUpWithEmailViewModel
-import java.util.Date
-import java.util.Locale
+
 
 
 @Composable
@@ -55,6 +53,9 @@ fun RegisterWithEmailScreen(
     val birthDate : LocalDate? by viewModel.birthDate.observeAsState(initial = null)
     val gender : String by viewModel.gender.observeAsState(initial = "")
     val registerEnable : Boolean by viewModel.registerEnable.observeAsState(initial = false)
+
+    val context = LocalContext.current
+    val errorMessage by viewModel.errorMessage.observeAsState()
 
 
     Column(
@@ -136,9 +137,19 @@ fun RegisterWithEmailScreen(
         )
         Spacer(modifier = Modifier.height(40.dp))
 
-        LoginButton(registerEnable) {
-            viewModel.onRegisterSelected()
+        // Observa y muestra el error
+        LaunchedEffect(errorMessage) {
+            errorMessage?.let {
+                Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+            }
         }
+
+        val registerEnable by viewModel.registerEnable.observeAsState(false)
+
+        LoginButton(
+            registerEnable,
+            onRegisterSelected = { viewModel.validateFieldsAndRegister() }
+        )
         Spacer(modifier = Modifier.height(40.dp))
     }
 }
@@ -146,7 +157,7 @@ fun RegisterWithEmailScreen(
 
 
 /**
- * Este método generará todos los títulos de todos los campos de texto con el mismo formato
+ * Este metodo generará todos los títulos de todos los campos de texto con el mismo formato
  * @param Int text
  */
 @Composable
@@ -279,12 +290,18 @@ fun DatePickerDocked(
     onDateSelected: (LocalDate?) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
+
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = selectedDate?.time
+        initialSelectedDateMillis = selectedDate
+            ?.atStartOfDayIn(TimeZone.currentSystemDefault())
+            ?.toEpochMilliseconds()
     )
 
-    // Conversión a texto para mostrar
-    val selectedDateText = selectedDate?.let { convertMillisToDate(it.time) } ?: ""
+    val selectedDateText = selectedDate?.let {
+        // Ejemplo de formateo simple: "dd/MM/yyyy"
+        "${it.dayOfMonth.toString().padStart(2, '0')}/" +
+                "${it.monthNumber.toString().padStart(2, '0')}/${it.year}"
+    } ?: ""
 
     Box(
         modifier = Modifier
@@ -293,7 +310,7 @@ fun DatePickerDocked(
     ) {
         OutlinedTextField(
             value = selectedDateText,
-            onValueChange = {},// No se necesita para campo de solo lectura
+            onValueChange = {},
             readOnly = true,
             trailingIcon = {
                 IconButton(onClick = { showDatePicker = true }) {
@@ -329,8 +346,11 @@ fun DatePickerDocked(
 
                     Button(
                         onClick = {
-                            // Maneja correctamente valores nulos
-                            val newDate = datePickerState.selectedDateMillis?.let { Date(it) }
+                            val newDate = datePickerState.selectedDateMillis?.let {
+                                Instant.fromEpochMilliseconds(it)
+                                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                                    .date
+                            }
                             onDateSelected(newDate)
                             showDatePicker = false
                         },
@@ -342,12 +362,6 @@ fun DatePickerDocked(
             }
         }
     }
-}
-
-// Función de conversión (sin cambios)
-fun convertMillisToDate(millis: Long): String {
-    val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
-    return formatter.format(Date(millis))
 }
 
 
@@ -432,12 +446,12 @@ fun GenderDropdownSelector(
 fun LoginButton(registerEnable: Boolean, onRegisterSelected: () -> Unit) {
     //Boton de REGISTRO
     Button(
-        onClick = {onRegisterSelected},
+        onClick = {onRegisterSelected ()},
         modifier = Modifier
             .fillMaxWidth()
             .padding(50.dp),
         colors = ButtonDefaults.buttonColors(RedPeakFlow),
-        enabled = registerEnable
+
     ) {
         Text(
             text = stringResource(R.string.IniciaSesion),

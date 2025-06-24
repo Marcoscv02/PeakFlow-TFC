@@ -1,15 +1,12 @@
 package marcos.peakflow.data
 
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
+
 
 @Serializable
 data class UserProfile(
-    val id: String,
-    val username: String? = null,
-    val full_name: String? = null,
-    @Serializable(with = LocalDateSerializer::class)
+    val username: String,
     val birthdate: LocalDate? = null,
-    val gender: String? = null,
-    val created_at: String? = null
+    val gender: String,
 )
