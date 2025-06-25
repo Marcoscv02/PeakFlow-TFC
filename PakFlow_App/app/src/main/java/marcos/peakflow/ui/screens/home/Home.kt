@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package marcos.peakflow.presentation.view.home
+package marcos.peakflow.ui.screens.home
 
 import android.annotation.SuppressLint
 import androidx.compose.material3.ExperimentalMaterial3Api

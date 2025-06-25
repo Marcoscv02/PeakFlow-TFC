@@ -1,13 +1,14 @@
-package marcos.peakflow.presentation.viewModel.login
+package marcos.peakflow.ui.screens.logueo.loginWithEmail
 
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import marcos.peakflow.data.SupabaseReposImpl.UserSupabaseRepositoryImpl
 
-class LoginWithEmailViewModel : ViewModel (
-
-){
+class LoginWithEmailViewModel(
+    private val userSupabaseRepositoryImpl: UserSupabaseRepositoryImpl
+) : ViewModel (){
 
     private val _userNameOrEmail = MutableLiveData<String>()
     val  userNameOrEmail : MutableLiveData<String> = _userNameOrEmail

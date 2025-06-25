@@ -1,4 +1,4 @@
-package marcos.peakflow
+package marcos.peakflow.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,8 +9,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import marcos.peakflow.core.navigation.NavigationWrapper
-import marcos.peakflow.presentation.theme.PeakFlowTheme
+import marcos.peakflow.ui.navigation.NavigationWrapper
+import marcos.peakflow.ui.theme.PeakFlowTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -18,6 +18,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val application = application as MyApp
             navHostController = rememberNavController()
 
             PeakFlowTheme {
@@ -26,7 +27,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     NavigationWrapper()
-                    SupabaseClient
                 }
             }
         }

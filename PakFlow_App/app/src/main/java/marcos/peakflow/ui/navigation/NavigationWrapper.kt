@@ -1,17 +1,17 @@
-package marcos.peakflow.core.navigation
+package marcos.peakflow.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import marcos.peakflow.presentation.view.home.HomeScreen
-import marcos.peakflow.presentation.view.initial.InitialScreen
-import marcos.peakflow.presentation.view.login.LoginScreen
-import marcos.peakflow.presentation.view.login.LoginWithEmailScreen
-import marcos.peakflow.presentation.view.signup.RegisterWithEmailScreen
-import marcos.peakflow.presentation.view.signup.SignUpScreen
-import marcos.peakflow.presentation.viewModel.login.LoginWithEmailViewModel
-import marcos.peakflow.presentation.viewModel.signup.SignUpWithEmailViewModel
+import marcos.peakflow.ui.screens.home.HomeScreen
+import marcos.peakflow.ui.screens.initial.InitialScreen
+import marcos.peakflow.ui.screens.logueo.login.LoginScreen
+import marcos.peakflow.ui.screens.logueo.loginWithEmail.LoginWithEmailScreen
+import marcos.peakflow.ui.screens.registro.registerWithEmail.RegisterWithEmailScreen
+import marcos.peakflow.ui.screens.registro.signup.SignUpScreen
+import marcos.peakflow.ui.screens.logueo.loginWithEmail.LoginWithEmailViewModel
+import marcos.peakflow.ui.screens.registro.registerWithEmail.SignUpWithEmailViewModel
 
 
 @Composable
@@ -70,8 +70,5 @@ fun NavigationWrapper() {
             composable<Home> {
                 HomeScreen()
             }
-
-
-
         }
 }

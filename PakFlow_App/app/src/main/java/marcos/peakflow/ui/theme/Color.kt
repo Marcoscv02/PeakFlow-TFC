@@ -1,4 +1,4 @@
-package marcos.peakflow.presentation.theme
+package marcos.peakflow.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

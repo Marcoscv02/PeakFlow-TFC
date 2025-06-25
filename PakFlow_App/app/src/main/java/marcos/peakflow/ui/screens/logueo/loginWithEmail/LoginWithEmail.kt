@@ -1,4 +1,4 @@
-package marcos.peakflow.presentation.view.login
+package marcos.peakflow.ui.screens.logueo.loginWithEmail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -30,11 +30,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import marcos.peakflow.R
-import marcos.peakflow.presentation.viewModel.login.LoginWithEmailViewModel
-import marcos.peakflow.presentation.theme.Black
-import marcos.peakflow.presentation.theme.Gray
-import marcos.peakflow.presentation.theme.RedPeakFlow
-import marcos.peakflow.presentation.theme.ShapeButton
+import marcos.peakflow.ui.theme.Black
+import marcos.peakflow.ui.theme.Gray
+import marcos.peakflow.ui.theme.RedPeakFlow
+import marcos.peakflow.ui.theme.ShapeButton
 
 @Composable
 fun LoginWithEmailScreen(

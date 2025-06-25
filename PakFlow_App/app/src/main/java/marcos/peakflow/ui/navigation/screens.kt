@@ -1,4 +1,4 @@
-package marcos.peakflow.core.navigation
+package marcos.peakflow.ui.navigation
 
 import kotlinx.serialization.Serializable
 

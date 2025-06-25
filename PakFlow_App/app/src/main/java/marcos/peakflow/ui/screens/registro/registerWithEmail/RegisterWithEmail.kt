@@ -1,4 +1,4 @@
-package marcos.peakflow.presentation.view.signup
+package marcos.peakflow.ui.screens.registro.registerWithEmail
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -33,10 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import kotlinx.datetime.*
 import marcos.peakflow.R
-import marcos.peakflow.presentation.theme.*
-import marcos.peakflow.presentation.theme.Gray
-import marcos.peakflow.presentation.viewModel.signup.SignUpWithEmailViewModel
-
+import marcos.peakflow.ui.theme.*
+import marcos.peakflow.ui.theme.Gray
 
 
 @Composable
@@ -143,8 +141,6 @@ fun RegisterWithEmailScreen(
                 Toast.makeText(context, it, Toast.LENGTH_LONG).show()
             }
         }
-
-        val registerEnable by viewModel.registerEnable.observeAsState(false)
 
         LoginButton(
             registerEnable,
