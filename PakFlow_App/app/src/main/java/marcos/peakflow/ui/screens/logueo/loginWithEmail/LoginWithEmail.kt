@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import marcos.peakflow.R
 import marcos.peakflow.ui.theme.Black
 import marcos.peakflow.ui.theme.Gray
@@ -37,10 +38,12 @@ import marcos.peakflow.ui.theme.ShapeButton
 
 @Composable
 fun LoginWithEmailScreen(
-    viewModel: LoginWithEmailViewModel,
+
     navigateToLogin: () -> Unit,
     navigateToHome: () -> Unit
 ){
+    val viewModel: LoginWithEmailViewModel = viewModel(factory = null)
+
     val userNameOrEmail : String by viewModel.userNameOrEmail.observeAsState(initial = "")
     val password : String by viewModel.password.observeAsState(initial = "")
 

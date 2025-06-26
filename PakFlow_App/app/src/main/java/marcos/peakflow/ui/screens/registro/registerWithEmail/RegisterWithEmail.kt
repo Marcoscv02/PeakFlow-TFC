@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.datetime.*
 import marcos.peakflow.R
 import marcos.peakflow.ui.theme.*
@@ -39,10 +40,11 @@ import marcos.peakflow.ui.theme.Gray
 
 @Composable
 fun RegisterWithEmailScreen(
-    viewModel: SignUpWithEmailViewModel,
     navigateToSignup: () -> Unit,
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit = {}
 ){
+
+    val viewModel: SignUpWithEmailViewModel = viewModel(factory = null)
 
     val userName : String by viewModel.userName.observeAsState(initial = "")
     val email : String by viewModel.email.observeAsState(initial = "")

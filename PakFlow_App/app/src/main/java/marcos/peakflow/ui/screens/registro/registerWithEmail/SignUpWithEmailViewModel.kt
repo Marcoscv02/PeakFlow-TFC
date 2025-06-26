@@ -6,11 +6,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.datetime.LocalDate
-import marcos.peakflow.data.SupabaseReposImpl.UserSupabaseRepositoryImpl
+import marcos.peakflow.data.SupabaseReposImpl.AuthSupabaseRepositoryImpl
+import marcos.peakflow.domain.model.User
 
-class SignUpWithEmailViewModel(
-    private val userSupabaseRepositoryImpl: UserSupabaseRepositoryImpl
-) : ViewModel () {
+class SignUpWithEmailViewModel( private val authRepository: AuthSupabaseRepositoryImpl ): ViewModel () {
+
+    private val _userState = MutableStateFlow<User?>(null)
+    val userState :StateFlow<User?> = _userState
 
     private val _userName = MutableStateFlow<String>("")
     val userName :StateFlow<String> = _userName.asStateFlow()

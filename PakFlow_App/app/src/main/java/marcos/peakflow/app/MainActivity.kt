@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val application = application as MyApp
+            val application = application as PeakFlowApp
             navHostController = rememberNavController()
 
             PeakFlowTheme {

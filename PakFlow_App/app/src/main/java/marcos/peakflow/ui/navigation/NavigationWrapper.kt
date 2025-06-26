@@ -1,6 +1,7 @@
 package marcos.peakflow.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -53,7 +54,6 @@ fun NavigationWrapper() {
 
             composable<LoginWithEmail> {
                 LoginWithEmailScreen(
-                    LoginWithEmailViewModel(),
                     navigateToLogin = {navController.popBackStack()},
                     navigateToHome =  {navController.navigate(Home)}
                 )
@@ -61,7 +61,6 @@ fun NavigationWrapper() {
 
             composable<RegisterWithEmail> {
                 RegisterWithEmailScreen(
-                    SignUpWithEmailViewModel(),
                     navigateToSignup = {navController.popBackStack()},
                     navigateToHome =  {navController.navigate(Home)}
                 )
