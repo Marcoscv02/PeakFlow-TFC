@@ -2,6 +2,7 @@ package marcos.peakflow.ui.screens.logueo.loginWithEmail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import marcos.peakflow.R
+import marcos.peakflow.ui.screens.PeakFlowViewModelFactory
 import marcos.peakflow.ui.theme.Black
 import marcos.peakflow.ui.theme.Gray
 import marcos.peakflow.ui.theme.RedPeakFlow
@@ -42,10 +45,9 @@ fun LoginWithEmailScreen(
     navigateToLogin: () -> Unit,
     navigateToHome: () -> Unit
 ){
-    val viewModel: LoginWithEmailViewModel = viewModel(factory = null)
+    val viewModel: LoginWithEmailViewModel = viewModel(factory = PeakFlowViewModelFactory())
 
-    val userNameOrEmail : String by viewModel.userNameOrEmail.observeAsState(initial = "")
-    val password : String by viewModel.password.observeAsState(initial = "")
+    val state by viewModel.userState.collectAsState()
 
 
     Column(
@@ -75,11 +77,11 @@ fun LoginWithEmailScreen(
         }
         Spacer(modifier = Modifier.height(80.dp))
 
-        //CAMPO DE USERNAME O EMAIL
+        //CAMPO DE EMAIL
         MakeText(R.string.userNameOrEmail, modifier = Modifier.align(Alignment.Start))
         CustomTextField(
-            value = userNameOrEmail,
-            onValueChange = { viewModel.OnLoginChanged(it,password)},
+            value = state!!.email,
+            onValueChange = { viewModel.updateFields(email = it)},
             placeholder = stringResource(R.string.placeholderRegisterScreen),
             keyboardType = KeyboardType.Text
         )
@@ -92,13 +94,14 @@ fun LoginWithEmailScreen(
             modifier = Modifier.align(Alignment.Start)
         )
         PasswordTextField(
-            value = password,
-            onValueChange = { viewModel.OnLoginChanged(userNameOrEmail, it) },
+            value = state!!.password,
+            onValueChange = { viewModel.updateFields(password = it) },
             placeholder = stringResource(R.string.placeholderRegisterScreen),
         )
         Text(
             text = stringResource(R.string.forgetPassword),
             modifier = Modifier
+                .clickable { viewModel.resetPassword() }
                 .padding(horizontal = 40.dp)
                 .align(Alignment.End),
             color = Color.White,
@@ -109,7 +112,7 @@ fun LoginWithEmailScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         //Boton de REGISTRO
-        LoginButton(true) { viewModel.OnLoginSelected() }
+        LoginButton(true) { viewModel.loginUser() }
         Spacer(modifier = Modifier.height(40.dp))
     }
 }

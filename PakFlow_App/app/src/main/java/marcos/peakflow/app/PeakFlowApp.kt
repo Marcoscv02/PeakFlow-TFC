@@ -10,20 +10,31 @@ import io.github.jan.supabase.postgrest.Postgrest
 class PeakFlowApp : Application() {
 
     companion object {
-        lateinit var supabaseClient: SupabaseClient
-            private set
+        private lateinit var instance: PeakFlowApp
+
+        fun getClient(): SupabaseClient {
+            return instance.supabaseClient
+        }
     }
+
+    private lateinit var supabaseClient: SupabaseClient
 
     override fun onCreate() {
         super.onCreate()
+        instance = this
 
-        val supabaseClient: SupabaseClient = createSupabaseClient(
-            supabaseUrl = "https://zyjdewgpqigihayqjstw.supabase.co",
-            supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5amRld2dwcWlnaWhheXFqc3R3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUyMjYwMDYsImV4cCI6MjA2MDgwMjAwNn0.1zpBC3NKuzwrSrtq04hYrc964mu_FsADRKUxIplcT8w"
-        ) {
-            install(Auth)
-            install(Postgrest)
-            Log.d("Conection", "Conexion establecida con supabase")
+        // Inicialización segura
+        try {
+            supabaseClient = createSupabaseClient(
+                supabaseUrl = "https://zyjdewgpqigihayqjstw.supabase.co",
+                supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5amRld2dwcWlnaWhheXFqc3R3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUyMjYwMDYsImV4cCI6MjA2MDgwMjAwNn0.1zpBC3NKuzwrSrtq04hYrc964mu_FsADRKUxIplcT8w"
+            ) {
+                install(Auth)
+                install(Postgrest)
+                Log.d("Connection", "Conexión establecida con Supabase")
+            }
+        } catch (e: Exception) {
+            Log.e("SupabaseInit", "Error al inicializar Supabase: ${e.message}")
         }
     }
 }

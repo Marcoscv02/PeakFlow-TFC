@@ -24,6 +24,7 @@
     <string name="placeholderRegisterScreen">Escribe aquí...</string>
     <string name="show_password">Mostrar contraseña</string>
     <string name="hide_password">Ocultar contraseña</string>
+    <string name="select_gender">sexo</string>
     <string name="gender_notSpecified">no especificado</string>
     <string name="gender_female">femenino</string>
     <string name="gender_male">maculino</string>

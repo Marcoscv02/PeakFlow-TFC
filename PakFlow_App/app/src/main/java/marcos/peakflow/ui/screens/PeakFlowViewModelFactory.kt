@@ -18,7 +18,7 @@ class PeakFlowViewModelFactory : ViewModelProvider.Factory {
                 SignUpWithEmailViewModel(RepositoryContainer.authRepository) as T
             }
 
-
+            //Aquí se asignarán mas viewModels a sus respectivos repositorios
             else -> throw IllegalArgumentException("ViewModel desconocido: ${modelClass.name}")
         }
     }

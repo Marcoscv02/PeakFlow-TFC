@@ -1,14 +1,14 @@
 package marcos.peakflow.domain.model
 
 import kotlinx.datetime.LocalDate
-import java.util.UUID
+import kotlinx.serialization.Serializable
 
-
-
+@Serializable
 data class User(
-    val uuid: UUID,
     val username: String,
     val email: String,
-    val birthdate: LocalDate?,
+    val birthdate: LocalDate? = null,
     val gender: String,
 )
+
+

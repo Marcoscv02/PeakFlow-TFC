@@ -3,7 +3,6 @@ package marcos.peakflow.ui.screens.registro.registerWithEmail
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +32,7 @@ import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.datetime.*
 import marcos.peakflow.R
+import marcos.peakflow.ui.screens.PeakFlowViewModelFactory
 import marcos.peakflow.ui.theme.*
 import marcos.peakflow.ui.theme.Gray
 
@@ -43,20 +42,20 @@ fun RegisterWithEmailScreen(
     navigateToSignup: () -> Unit,
     navigateToHome: () -> Unit = {}
 ){
-
-    val viewModel: SignUpWithEmailViewModel = viewModel(factory = null)
-
-    val userName : String by viewModel.userName.observeAsState(initial = "")
-    val email : String by viewModel.email.observeAsState(initial = "")
-    val password1 : String by viewModel.password1.observeAsState(initial = "")
-    val password2 : String by viewModel.password2.observeAsState(initial = "")
-    val birthDate : LocalDate? by viewModel.birthDate.observeAsState(initial = null)
-    val gender : String by viewModel.gender.observeAsState(initial = "")
-    val registerEnable : Boolean by viewModel.registerEnable.observeAsState(initial = false)
-
     val context = LocalContext.current
-    val errorMessage by viewModel.errorMessage.observeAsState()
+    val viewModel: SignUpWithEmailViewModel = viewModel(factory = PeakFlowViewModelFactory())
+    val userState by viewModel.userState.collectAsState()
 
+    // Observar cambios en el estado para navegación y mensajes
+    LaunchedEffect(userState) {
+        userState!!.errorMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+        }
+
+        if (userState!!.isRegistered) {
+            navigateToHome()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -64,91 +63,90 @@ fun RegisterWithEmailScreen(
             .verticalScroll(rememberScrollState())
             .background(Color.Black),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
-
-        //BOTÓN DE RETROCEDER
+    ) {
+        // BOTÓN DE RETROCEDER
         IconButton(
-            onClick = {navigateToSignup ()},
+            onClick = navigateToSignup,
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(16.dp)
         ) {
-            //Logo de la aplicación
             Image(
                 painter = painterResource(id = R.drawable.back),
                 colorFilter = ColorFilter.tint(Color.White),
                 contentDescription = "retroceder",
-                modifier = Modifier
-                    .size(20.dp),
+                modifier = Modifier.size(20.dp),
             )
         }
 
-        //CAMPO DE USERNAME
-        MakeText(R.string.userNameRegisterValue, modifier = Modifier.align(Alignment.Start))
-        CustomTextField(
-            value = userName,
-            onValueChange = {viewModel.onRegisterChanged(it, email, password1, password2, birthDate , gender)},
-            placeholder = stringResource(R.string.placeholderRegisterScreen),
-            keyboardType = KeyboardType.Text
-        )
-        Spacer(modifier = Modifier.height(40.dp))
+        // Campos de registro
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 40.dp)
+                .fillMaxWidth()
+        ) {
+            // CAMPO DE USERNAME
+            MakeText(R.string.userNameRegisterValue)
+            CustomTextField(
+                value = userState!!.username,
+                onValueChange = { viewModel.updateFields(userName = it) },
+                placeholder = stringResource(R.string.placeholderRegisterScreen),
+                keyboardType = KeyboardType.Text
+            )
+            Spacer(modifier = Modifier.height(40.dp))
 
-        //CAMPO DE CORREO
-        MakeText(R.string.emailRegisterValue, modifier = Modifier.align(Alignment.Start))
-        CustomTextField(
-            value = email,
-            onValueChange = {viewModel.onRegisterChanged(userName, it, password1, password2, birthDate , gender)},
-            placeholder = stringResource(R.string.placeholderRegisterScreen),
-            keyboardType = KeyboardType.Email
-        )
-        Spacer(modifier = Modifier.height(40.dp))
+            // CAMPO DE CORREO
+            MakeText(R.string.emailRegisterValue)
+            CustomTextField(
+                value = userState!!.email,
+                onValueChange = { viewModel.updateFields(email = it) },
+                placeholder = stringResource(R.string.placeholderRegisterScreen),
+                keyboardType = KeyboardType.Email
+            )
+            Spacer(modifier = Modifier.height(40.dp))
 
-        //CAMPO DE CONTRASEÑA
-        MakeText(R.string.passwordRegisterValue, modifier = Modifier.align(Alignment.Start))
-        PasswordTextField(
-            value = password1,
-            onValueChange = {viewModel.onRegisterChanged(userName, email, it, password2, birthDate , gender)},
-            placeholder = stringResource(R.string.placeholderRegisterScreen),
-        )
-        Spacer(modifier = Modifier.height(40.dp))
+            // CAMPO DE CONTRASEÑA
+            MakeText(R.string.passwordRegisterValue)
+            PasswordTextField(
+                value = userState!!.password1,
+                onValueChange = { viewModel.updateFields(password1 = it) },
+                placeholder = stringResource(R.string.placeholderRegisterScreen),
+            )
+            Spacer(modifier = Modifier.height(40.dp))
 
-        //CAMPO DE REPETIR CONTRASEÑA
-        MakeText(R.string.passwordRegisterValue2, modifier = Modifier.align(Alignment.Start))
-        PasswordTextField(
-            value = password2,
-            onValueChange = {viewModel.onRegisterChanged(userName, email, password1, it, birthDate , gender)},
-            placeholder = stringResource(R.string.placeholderRegisterScreen),
-        )
-        Spacer(modifier = Modifier.height(40.dp))
+            // CAMPO DE REPETIR CONTRASEÑA
+            MakeText(R.string.passwordRegisterValue2)
+            PasswordTextField(
+                value = userState!!.password2,
+                onValueChange = { viewModel.updateFields(password2 = it) },
+                placeholder = stringResource(R.string.placeholderRegisterScreen),
+            )
+            Spacer(modifier = Modifier.height(40.dp))
 
-        //CAMPO DE FECHA DE NACIMIENTO
-        MakeText(R.string.birthdayRegisterValue2, modifier = Modifier.align(Alignment.Start))
-        DatePickerDocked(
-            selectedDate = birthDate,
-            onDateSelected = { viewModel.onRegisterChanged(userName, email, password1, password2, it , gender) }
-        )
-        Spacer(modifier = Modifier.height(40.dp))
+            // CAMPO DE FECHA DE NACIMIENTO
+            MakeText(R.string.birthdayRegisterValue2)
+            DatePickerDocked(
+                selectedDate = userState!!.birthdate,
+                onDateSelected = { viewModel.updateFields(birthDate = it) }
+            )
+            Spacer(modifier = Modifier.height(40.dp))
 
-        //CAMPO SEXO
-        MakeText(R.string.sexoRegisterValue, modifier = Modifier.align(Alignment.Start))
-        GenderDropdownSelector(
-            selectedOption = gender,
-            onOptionSelected = { viewModel.onRegisterChanged(userName, email, password1, password2, birthDate , it) },
-        )
-        Spacer(modifier = Modifier.height(40.dp))
+            // CAMPO SEXO
+            MakeText(R.string.sexoRegisterValue)
+            GenderDropdownSelector(
+                selectedOption = userState!!.gender,
+                onOptionSelected = { viewModel.updateFields(gender = it) },
+            )
+            Spacer(modifier = Modifier.height(40.dp))
 
-        // Observa y muestra el error
-        LaunchedEffect(errorMessage) {
-            errorMessage?.let {
-                Toast.makeText(context, it, Toast.LENGTH_LONG).show()
-            }
+            // Botón de registro
+            LoginButton(
+                enabled = userState!!.isRegisterEnabled && !userState!!.isLoading,
+                isLoading = userState!!.isLoading,
+                onRegisterSelected = { viewModel.registerUser() }
+            )
+            Spacer(modifier = Modifier.height(40.dp))
         }
-
-        LoginButton(
-            registerEnable,
-            onRegisterSelected = { viewModel.validateFieldsAndRegister() }
-        )
-        Spacer(modifier = Modifier.height(40.dp))
     }
 }
 
@@ -159,18 +157,16 @@ fun RegisterWithEmailScreen(
  * @param Int text
  */
 @Composable
-private fun MakeText (
-        text: Int,
-        modifier: Modifier
-    ){
-        Text(
-            text = stringResource(text),
-            modifier = modifier.padding(horizontal = 40.dp),
-            color = Color.White,
-            fontSize = 20.sp,
-            lineHeight = 50.sp,
-        )
+private fun MakeText(text: Int, modifier: Modifier = Modifier) {
+    Text(
+        text = stringResource(text),
+        modifier = modifier,
+        color = Color.White,
+        fontSize = 20.sp,
+        lineHeight = 50.sp,
+    )
 }
+
 
 
 
@@ -188,15 +184,12 @@ private fun CustomTextField(
     placeholder: String,
     keyboardType: KeyboardType = KeyboardType.Text,
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-
     TextField(
         value = value,
-        onValueChange = {onValueChange(it)},
+        onValueChange = onValueChange,
         modifier = Modifier
-            .height(55.dp)
-            .height(55.dp)
-            .size(300.dp),
+            .fillMaxWidth()
+            .height(55.dp),
         placeholder = {
             Text(placeholder, color = ShapeButton)
         },
@@ -206,9 +199,7 @@ private fun CustomTextField(
         ),
         shape = RoundedCornerShape(8.dp),
         singleLine = true,
-        interactionSource = interactionSource,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        visualTransformation = if(keyboardType.equals(KeyboardType.Password)) PasswordVisualTransformation() else VisualTransformation.None,
     )
 }
 
@@ -225,16 +216,14 @@ fun PasswordTextField(
     placeholder: String,
     onValueChange: (String) -> Unit,
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
-
-    OutlinedTextField(
+    TextField(
         value = value,
-        onValueChange = {onValueChange(it)},
+        onValueChange = onValueChange,
         modifier = Modifier
-            .height(55.dp)
-            .size(300.dp),
+            .fillMaxWidth()
+            .height(55.dp),
         placeholder = {
             Text(placeholder, color = ShapeButton)
         },
@@ -242,7 +231,6 @@ fun PasswordTextField(
             unfocusedContainerColor = Gray,
             focusedContainerColor = ShapeButton
         ),
-        interactionSource = interactionSource,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         visualTransformation = if (passwordVisible) {
             VisualTransformation.None
@@ -250,17 +238,14 @@ fun PasswordTextField(
             PasswordVisualTransformation()
         },
         trailingIcon = {
-            val imageRes = if (passwordVisible) {
-                R.drawable.visibility_on
-            } else {
-                R.drawable.visibility_of // Nombre corregido (típicamente 'visibility_off')
-            }
-
             IconButton(
                 onClick = { passwordVisible = !passwordVisible }
             ) {
                 Icon(
-                    painter = painterResource(id = imageRes),
+                    painter = painterResource(
+                        id = if (passwordVisible) R.drawable.visibility_on
+                        else R.drawable.visibility_of
+                    ),
                     contentDescription = if (passwordVisible) {
                         stringResource(R.string.hide_password)
                     } else {
@@ -296,17 +281,16 @@ fun DatePickerDocked(
     )
 
     val selectedDateText = selectedDate?.let {
-        // Ejemplo de formateo simple: "dd/MM/yyyy"
         "${it.dayOfMonth.toString().padStart(2, '0')}/" +
                 "${it.monthNumber.toString().padStart(2, '0')}/${it.year}"
     } ?: ""
 
     Box(
         modifier = Modifier
-            .height(55.dp)
-            .size(300.dp),
+            .fillMaxWidth()
+            .height(55.dp),
     ) {
-        OutlinedTextField(
+        TextField(
             value = selectedDateText,
             onValueChange = {},
             readOnly = true,
@@ -329,7 +313,7 @@ fun DatePickerDocked(
         if (showDatePicker) {
             Popup(
                 onDismissRequest = { showDatePicker = false },
-                alignment = Alignment.TopStart
+                alignment = Alignment.Center
             ) {
                 Box(
                     modifier = Modifier
@@ -374,17 +358,14 @@ fun GenderDropdownSelector(
     selectedOption: String?,
     onOptionSelected: (String) -> Unit
 ) {
-    // Definimos las opciones como pares (valor, recurso de texto)
     val genderOptions = listOf(
         "not_specified" to R.string.gender_notSpecified,
         "male" to R.string.gender_male,
         "female" to R.string.gender_female
     )
 
-    // Estado para controlar la expansión del menú
     var expanded by remember { mutableStateOf(false) }
 
-    // Texto a mostrar en el campo (basado en la opción seleccionada)
     val displayText = selectedOption?.let { selectedValue ->
         genderOptions.find { it.first == selectedValue }?.let {
             stringResource(id = it.second)
@@ -394,29 +375,25 @@ fun GenderDropdownSelector(
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
-        modifier = Modifier
-            .padding(16.dp)
-            .padding(horizontal = 30.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
-        // Campo de texto que muestra la selección actual
-        OutlinedTextField(
+        TextField(
             readOnly = true,
             value = displayText,
-            onValueChange = { onOptionSelected(it) },
+            onValueChange = {},
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
             modifier = Modifier
                 .menuAnchor()
                 .fillMaxWidth(),
-            placeholder = { Text(text = stringResource(R.string.sexoRegisterValue), color = ShapeButton) },
+            placeholder = { Text(text = stringResource(R.string.select_gender), color = ShapeButton) },
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = Gray,
                 focusedContainerColor = ShapeButton
             )
         )
 
-        // Menú desplegable con las opciones
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
@@ -435,26 +412,37 @@ fun GenderDropdownSelector(
 }
 
 
+
 /**
  * Botón de registro
  * @param Boolean: registerEnable- Indica si se cumplen todas las condiciones para poder logearse
  * @param Unit: onRegisterselected: Envia una funcion Lambda con lo que tiene que hacer el boton al ser clicado
  */
 @Composable
-fun LoginButton(registerEnable: Boolean, onRegisterSelected: () -> Unit) {
-    //Boton de REGISTRO
+fun LoginButton(
+    enabled: Boolean,
+    isLoading: Boolean,
+    onRegisterSelected: () -> Unit
+) {
     Button(
-        onClick = {onRegisterSelected ()},
+        onClick = onRegisterSelected,
+        enabled = enabled,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(50.dp),
-        colors = ButtonDefaults.buttonColors(RedPeakFlow),
-
+            .padding(vertical = 16.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = RedPeakFlow),
     ) {
-        Text(
-            text = stringResource(R.string.IniciaSesion),
-            color = Black,
-            fontSize = 15.sp
-        )
+        if (isLoading) {
+            CircularProgressIndicator(
+                color = Color.White,
+                modifier = Modifier.size(24.dp)
+            )
+        } else {
+            Text(
+                text = stringResource(R.string.IniciaSesion),
+                color = Black,
+                fontSize = 15.sp
+            )
+        }
     }
 }
