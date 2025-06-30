@@ -22,6 +22,7 @@ ktorClientAndroid = "3.1.2"
 
 uiText = "1.8.3"
 runtimeLivedata = "1.8.3"
+coreI18n = "1.0.0"
 
 
 

@@ -33,7 +33,7 @@ class AuthSupabaseRepositoryImpl(
             mapOf(
                 "id" to userId,
                 "name" to user.username,
-                "birthdate" to user.birthdate,
+                "birthdate" to user.birthdate.toString(),
                 "gender" to user.gender
             )
         )

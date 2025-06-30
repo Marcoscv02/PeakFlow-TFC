@@ -19,7 +19,7 @@ import marcos.peakflow.ui.screens.registro.registerWithEmail.SignUpWithEmailView
 fun NavigationWrapper() {
 
         val navController = rememberNavController()
-        NavHost(navController = navController, startDestination = Initial){
+        NavHost(navController = navController, startDestination = Home){
 
 
             composable<Initial> {

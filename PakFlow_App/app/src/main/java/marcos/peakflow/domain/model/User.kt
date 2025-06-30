@@ -7,7 +7,8 @@ import kotlinx.serialization.Serializable
 data class User(
     val username: String,
     val email: String,
-    val birthdate: LocalDate? = null,
+    //@Serializable(with = NullableLocalDateSerializer::class)
+    val birthdate: LocalDate?,
     val gender: String,
 )
 
