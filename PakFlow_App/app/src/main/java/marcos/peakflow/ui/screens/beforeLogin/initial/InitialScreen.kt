@@ -1,4 +1,4 @@
-package marcos.peakflow.ui.screens.initial
+package marcos.peakflow.ui.screens.beforeLogin.initial
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,7 +25,7 @@ import marcos.peakflow.ui.theme.BackgroundButton
 import marcos.peakflow.ui.theme.Black
 import marcos.peakflow.ui.theme.Gray
 import marcos.peakflow.ui.theme.RedPeakFlow
-import marcos.peakflow.ui.theme.ShapeButton
+import marcos.peakflow.ui.theme.backgroudNavSelectedItem
 
 @Composable
 fun InitialScreen(
@@ -85,12 +85,12 @@ fun InitialScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp)
-                .border(2.dp, color = ShapeButton, CircleShape),
+                .border(2.dp, color = backgroudNavSelectedItem, CircleShape),
             colors = ButtonDefaults.buttonColors(BackgroundButton)
         ) {
             Text(
                 text = stringResource(R.string.InicioSesion),
-                color = ShapeButton,
+                color = backgroudNavSelectedItem,
                 fontSize = 15.sp
             )
         }

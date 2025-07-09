@@ -1,4 +1,4 @@
-package marcos.peakflow.ui.screens.registro.registerWithEmail
+package marcos.peakflow.ui.screens.beforeLogin.registro.registerWithEmail
 
 import android.util.Log
 import android.util.Patterns
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import marcos.peakflow.data.SupabaseReposImpl.AuthSupabaseRepositoryImpl
 import marcos.peakflow.domain.model.User
-import marcos.peakflow.ui.screens.registro.UserState
+import marcos.peakflow.ui.screens.beforeLogin.registro.UserState
 
 class SignUpWithEmailViewModel(
     private val authRepository: AuthSupabaseRepositoryImpl) :

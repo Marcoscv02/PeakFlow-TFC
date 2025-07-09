@@ -1,4 +1,4 @@
-package marcos.peakflow.ui.screens.logueo
+package marcos.peakflow.ui.screens.beforeLogin.logueo
 
  data class UserState(
     val email: String ="",

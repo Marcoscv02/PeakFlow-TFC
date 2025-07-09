@@ -19,3 +19,12 @@ object LoginWithEmail
 
 @Serializable
 object  Home
+
+@Serializable
+object Play
+
+@Serializable
+object Route
+
+@Serializable
+object Training

@@ -1,7 +1,6 @@
 package marcos.peakflow.domain.model
 
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.format
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -21,5 +20,6 @@ object NullableLocalDateSerializer : KSerializer<LocalDate?> {
     override fun deserialize(decoder: Decoder): LocalDate? {
         val dateString = decoder.decodeString()
 //        return if (dateString.isBlank()) null else LocalDate.parse(dateString, formatter)
+        return null
     }
 }

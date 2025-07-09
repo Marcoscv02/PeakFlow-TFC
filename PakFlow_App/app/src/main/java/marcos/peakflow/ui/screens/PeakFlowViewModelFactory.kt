@@ -3,8 +3,8 @@ package marcos.peakflow.ui.screens
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import marcos.peakflow.data.SupabaseReposImpl.RepositoryContainer
-import marcos.peakflow.ui.screens.logueo.loginWithEmail.LoginWithEmailViewModel
-import marcos.peakflow.ui.screens.registro.registerWithEmail.SignUpWithEmailViewModel
+import marcos.peakflow.ui.screens.beforeLogin.logueo.loginWithEmail.LoginWithEmailViewModel
+import marcos.peakflow.ui.screens.beforeLogin.registro.registerWithEmail.SignUpWithEmailViewModel
 
 class PeakFlowViewModelFactory : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")

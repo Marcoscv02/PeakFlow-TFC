@@ -39,7 +39,28 @@
     <string name="registrate">Regístrate</string>
 
     <!--LogIn With Email-->
-    <string name="userNameOrEmail">Introduce usuario o email</string>
+    <string name="userNameOrEmail">Introduce email</string>
     <string name="forgetPassword">¿Has olvidado tu contraseña?</string>
+
+    <!--BotomNavBar-->
+    <string name="home">Inicio</string>
+    <string name="play">Grabar Ruta</string>
+    <string name="route">Seguir Ruta</string>
+    <string name="training">Mis Entrenos</string>
+
+    <!--Home-->
+    <string name="homeTitleScreen">Inicio</string>
+
+    <!--Play-->
+    <string name="playTitleScreen">Grabación</string>
+
+    <!--Route-->
+    <string name="routeTitleScreen">Seguir Ruta</string>
+
+    <!--Trainings-->
+    <string name="trainingsTitleScreen">Mis Entrenos</string>
+
+
+
 
 </resources>

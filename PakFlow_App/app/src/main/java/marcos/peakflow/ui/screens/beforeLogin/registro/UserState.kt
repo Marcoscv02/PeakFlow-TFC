@@ -1,4 +1,4 @@
-package marcos.peakflow.ui.screens.registro
+package marcos.peakflow.ui.screens.beforeLogin.registro
 
 import kotlinx.datetime.LocalDate
 import java.util.UUID

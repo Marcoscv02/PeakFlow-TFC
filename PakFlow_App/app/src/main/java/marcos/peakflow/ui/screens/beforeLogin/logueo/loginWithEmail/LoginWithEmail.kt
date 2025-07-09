@@ -1,4 +1,4 @@
-package marcos.peakflow.ui.screens.logueo.loginWithEmail
+package marcos.peakflow.ui.screens.beforeLogin.logueo.loginWithEmail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,7 +37,7 @@ import marcos.peakflow.ui.screens.PeakFlowViewModelFactory
 import marcos.peakflow.ui.theme.Black
 import marcos.peakflow.ui.theme.Gray
 import marcos.peakflow.ui.theme.RedPeakFlow
-import marcos.peakflow.ui.theme.ShapeButton
+import marcos.peakflow.ui.theme.backgroudNavSelectedItem
 
 @Composable
 fun LoginWithEmailScreen(
@@ -169,11 +169,11 @@ fun CustomTextField(
             .height(55.dp)
             .size(300.dp),
         placeholder = {
-            Text(placeholder, color = ShapeButton)
+            Text(placeholder, color = backgroudNavSelectedItem)
         },
         colors = TextFieldDefaults.colors(
             unfocusedContainerColor = Gray,
-            focusedContainerColor = ShapeButton
+            focusedContainerColor = backgroudNavSelectedItem
         ),
         shape = RoundedCornerShape(8.dp),
         )
@@ -202,11 +202,11 @@ fun PasswordTextField(
             .height(55.dp)
             .size(300.dp),
         placeholder = {
-            Text(placeholder, color = ShapeButton)
+            Text(placeholder, color = backgroudNavSelectedItem)
         },
         colors = TextFieldDefaults.colors(
             unfocusedContainerColor = Gray,
-            focusedContainerColor = ShapeButton
+            focusedContainerColor = backgroudNavSelectedItem
         ),
         interactionSource = interactionSource,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),

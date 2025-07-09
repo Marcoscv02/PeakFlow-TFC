@@ -1,18 +1,18 @@
 package marcos.peakflow.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import marcos.peakflow.ui.screens.home.HomeScreen
-import marcos.peakflow.ui.screens.initial.InitialScreen
-import marcos.peakflow.ui.screens.logueo.login.LoginScreen
-import marcos.peakflow.ui.screens.logueo.loginWithEmail.LoginWithEmailScreen
-import marcos.peakflow.ui.screens.registro.registerWithEmail.RegisterWithEmailScreen
-import marcos.peakflow.ui.screens.registro.signup.SignUpScreen
-import marcos.peakflow.ui.screens.logueo.loginWithEmail.LoginWithEmailViewModel
-import marcos.peakflow.ui.screens.registro.registerWithEmail.SignUpWithEmailViewModel
+import marcos.peakflow.ui.screens.afterLogin.Route.RouteScreen
+import marcos.peakflow.ui.screens.afterLogin.home.HomeScreen
+import marcos.peakflow.ui.screens.afterLogin.play.PlayScreen
+import marcos.peakflow.ui.screens.afterLogin.trainings.TrainingsScreen
+import marcos.peakflow.ui.screens.beforeLogin.initial.InitialScreen
+import marcos.peakflow.ui.screens.beforeLogin.logueo.login.LoginScreen
+import marcos.peakflow.ui.screens.beforeLogin.logueo.loginWithEmail.LoginWithEmailScreen
+import marcos.peakflow.ui.screens.beforeLogin.registro.registerWithEmail.RegisterWithEmailScreen
+import marcos.peakflow.ui.screens.beforeLogin.registro.signup.SignUpScreen
 
 
 @Composable
@@ -67,7 +67,40 @@ fun NavigationWrapper() {
             }
 
             composable<Home> {
-                HomeScreen()
+                HomeScreen(
+                    navigateToPlay = {navController.navigate(Play)},
+                    navigateToRoute = {navController.navigate(Route)},
+                    navigateToTraining = {navController.navigate(Training)},
+                    navigateToUserPanel = {},
+                    navigateToNotifPanel = {}
+                )
+            }
+
+            composable<Play>{
+                PlayScreen(
+                    navigateToHome = {navController.navigate(Home)},
+                    navigateToRoute = {navController.navigate(Route)},
+                    navigateToTraining = {navController.navigate(Training)},
+                    navigateBack = {navController.popBackStack()}
+                )
+            }
+
+            composable<Route>{
+                RouteScreen(
+                    navigateToHome = {navController.navigate(Home)},
+                    navigateToPlay = {navController.navigate(Play)},
+                    navigateToTraining = {navController.navigate(Training)},
+                    navigateBack = {navController.popBackStack()}
+
+                )
+            }
+
+            composable<Training> {
+                TrainingsScreen(
+                    navigateToHome = {navController.navigate(Home)},
+                    navigateToPlay = {navController.navigate(Play)},
+                    navigateToRoute = {navController.navigate(Route)}
+                )
             }
         }
 }

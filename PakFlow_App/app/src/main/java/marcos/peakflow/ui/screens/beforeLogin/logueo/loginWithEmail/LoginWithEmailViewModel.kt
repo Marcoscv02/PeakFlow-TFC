@@ -1,4 +1,4 @@
-package marcos.peakflow.ui.screens.logueo.loginWithEmail
+package marcos.peakflow.ui.screens.beforeLogin.logueo.loginWithEmail
 
 import android.util.Log
 import android.util.Patterns
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import marcos.peakflow.data.SupabaseReposImpl.AuthSupabaseRepositoryImpl
-import marcos.peakflow.ui.screens.logueo.UserState
+import marcos.peakflow.ui.screens.beforeLogin.logueo.UserState
 
 @Suppress("UNUSED_EXPRESSION", "UnusedDataClassCopyResult")
 class LoginWithEmailViewModel(

@@ -1,17 +1,10 @@
-package marcos.peakflow.ui.screens.logueo.login
+package marcos.peakflow.ui.screens.beforeLogin.registro.signup
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,14 +25,14 @@ import marcos.peakflow.R
 import marcos.peakflow.ui.theme.BackgroundButton
 import marcos.peakflow.ui.theme.Black
 import marcos.peakflow.ui.theme.RedPeakFlow
-import marcos.peakflow.ui.theme.ShapeButton
+import marcos.peakflow.ui.theme.backgroudNavSelectedItem
 
 
 @Composable
-fun LoginScreen (
-    navigateToSignup :() -> Unit,
-    navigateToLoginWithEmail :() -> Unit
-) {
+fun SignUpScreen (
+    navigateToLogin :() -> Unit,
+    navigateToRegisterWithEmail :() -> Unit
+){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -58,9 +51,9 @@ fun LoginScreen (
         )
         Spacer(modifier = Modifier.weight(1f))
 
-        //Slogan
+        //Texto registro
         Text(
-            text = stringResource(id = R.string.textoInicioSesion),
+            text = stringResource(id = R.string.textoRegistro),
             modifier = Modifier.padding(30.dp),
             color = Color.White,
             fontSize = 35.sp,
@@ -73,16 +66,16 @@ fun LoginScreen (
 
         //Boton de INICIO CON EMAIL
         Button(
-            onClick = {navigateToLoginWithEmail ()},
+            onClick = {navigateToRegisterWithEmail()},
             modifier = Modifier
                 .fillMaxWidth()
                 .height(45.dp)
                 .padding(horizontal = 32.dp),
             colors = ButtonDefaults.buttonColors(RedPeakFlow),
 
-        ) {
+            ) {
             Text(
-                text = stringResource(R.string.InicioSesionEmail),
+                text = stringResource(R.string.RegistroEmail),
                 color = Black,
                 fontSize = 15.sp
             )
@@ -90,48 +83,47 @@ fun LoginScreen (
         Spacer(modifier = Modifier.height(12.dp))
 
         //boton de INICIO CON GOOGLE
-        CustomButton(painterResource(R.drawable.google), stringResource(R.string.InicioSesionGoogle))
+        CustomButton(painterResource(R.drawable.google), stringResource(R.string.RegistroGoogle))
         Spacer(modifier = Modifier.height(12.dp))
 
         //boton de INICIO CON FACEBOOK
-        CustomButton(painterResource(R.drawable.facebook), stringResource(R.string.InicioSesionFacebook))
+        CustomButton(painterResource(R.drawable.facebook), stringResource(R.string.RegistroFacebook))
         Spacer(modifier = Modifier.weight(1f))
 
         //Texto que lleva al registro
         Text(
-            text = stringResource(id = R.string.noTienesCuenta),
+            text = stringResource(id = R.string.yaTienesCuenta),
             color = Color.White,
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = stringResource(id = R.string.registrate),
+            text = stringResource(id = R.string.IniciaSesion),
             color = Color.White,
-            modifier = Modifier.clickable { navigateToSignup() },
+            modifier = Modifier.clickable { navigateToLogin() },
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.weight(1f))
 
     }
-
 }
 
 /**
- * Funcion encargada de crear los botones customizados de iniciar sesion con Google y con Facebook
+ * Funcion encargada de crear los botones customizados de Refistrarse con Google y con Facebook
  * @param Painter
  * @param String
  */
 @Composable
-private fun CustomButton(painter: Painter, text: String){
-    Box (
+private fun CustomButton(painter: Painter, text: String,) {
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp)
             .padding(horizontal = 32.dp)
             .background(BackgroundButton)
-            .border(2.dp, ShapeButton, CircleShape)
+            .border(2.dp, backgroudNavSelectedItem, CircleShape)
             .clickable { },
         contentAlignment = Alignment.CenterStart
-    ){
+    ) {
         Image(
             painter = painter,
             contentDescription = "",
@@ -147,3 +139,5 @@ private fun CustomButton(painter: Painter, text: String){
         )
     }
 }
+
+

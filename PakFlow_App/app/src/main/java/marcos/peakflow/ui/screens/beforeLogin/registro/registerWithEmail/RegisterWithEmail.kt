@@ -1,4 +1,4 @@
-package marcos.peakflow.ui.screens.registro.registerWithEmail
+package marcos.peakflow.ui.screens.beforeLogin.registro.registerWithEmail
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -191,11 +191,11 @@ private fun CustomTextField(
             .fillMaxWidth()
             .height(55.dp),
         placeholder = {
-            Text(placeholder, color = ShapeButton)
+            Text(placeholder, color = backgroudNavSelectedItem)
         },
         colors = TextFieldDefaults.colors(
             unfocusedContainerColor = Gray,
-            focusedContainerColor = ShapeButton
+            focusedContainerColor = backgroudNavSelectedItem
         ),
         shape = RoundedCornerShape(8.dp),
         singleLine = true,
@@ -225,11 +225,11 @@ fun PasswordTextField(
             .fillMaxWidth()
             .height(55.dp),
         placeholder = {
-            Text(placeholder, color = ShapeButton)
+            Text(placeholder, color = backgroudNavSelectedItem)
         },
         colors = TextFieldDefaults.colors(
             unfocusedContainerColor = Gray,
-            focusedContainerColor = ShapeButton
+            focusedContainerColor = backgroudNavSelectedItem
         ),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         visualTransformation = if (passwordVisible) {
