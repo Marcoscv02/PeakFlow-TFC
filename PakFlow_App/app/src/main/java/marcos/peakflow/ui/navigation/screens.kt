@@ -21,6 +21,9 @@ object LoginWithEmail
 object  Home
 
 @Serializable
+object UserPanel
+
+@Serializable
 object Play
 
 @Serializable

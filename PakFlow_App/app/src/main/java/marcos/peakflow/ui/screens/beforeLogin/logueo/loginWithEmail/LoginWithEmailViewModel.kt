@@ -58,13 +58,14 @@ class LoginWithEmailViewModel(
      * Método del viewModel para logearse (Llama al método de validar los campos, y si no se prouce ningún error llama al metodo del repositorio para logear un usuario ya existente)
      * @throws Exception: e
      */
-    fun loginUser() {
+    fun loginUser(onResult: (Boolean) -> Unit) {
         val currentState = _userState.value
         val email = currentState.email
         val password = currentState.password
 
         if (!isValidEmail(email)) {
             _userState.update { it.copy(errorMessage = "El correo electrónico no es válido") }
+            onResult(false)
             return
         }
 
@@ -72,7 +73,7 @@ class LoginWithEmailViewModel(
             try {
                 _userState.update { it.copy(isLoading = true, errorMessage = null) }
 
-                authRepository.loginUser(email, password)
+                val success = authRepository.loginUser(email, password)
 
                 // Éxito en login
                 _userState.update {
@@ -81,6 +82,8 @@ class LoginWithEmailViewModel(
                         // Aquí podrías añadir lógica adicional como isLoggedIn = true
                     )
                 }
+
+                onResult(success)
 
             } catch (e: Exception) {
                 Log.e(
@@ -94,6 +97,7 @@ class LoginWithEmailViewModel(
                         isLoading = false
                     )
                 }
+                onResult(false)
             }
         }
     }

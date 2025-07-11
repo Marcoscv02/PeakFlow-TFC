@@ -27,7 +27,7 @@ fun HomeScreen(
     Scaffold(
         topBar = { StandardTopAppBar(
             title = stringResource(R.string.homeTitleScreen),
-            onLeftClick = { },
+            onLeftClick = navigateToUserPanel,
             leftIcon = R.drawable.user,
             onRightClick = {  },
             rightIcon = R.drawable.notification
