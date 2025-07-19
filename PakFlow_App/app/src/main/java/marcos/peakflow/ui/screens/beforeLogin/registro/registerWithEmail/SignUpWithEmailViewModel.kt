@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import marcos.peakflow.data.SupabaseReposImpl.AuthSupabaseRepositoryImpl
-import marcos.peakflow.domain.model.User
+import marcos.peakflow.domain.model.user.User
 import marcos.peakflow.ui.screens.beforeLogin.registro.UserState
 
 class SignUpWithEmailViewModel(

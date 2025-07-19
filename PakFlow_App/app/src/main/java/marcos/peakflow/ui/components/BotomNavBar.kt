@@ -32,7 +32,7 @@ sealed class Screen(
 
 @Composable
 fun BottomNavBar(
-    currentScreen: String,
+    currentScreen: String?,
     navigateToHome: () -> Unit,
     navigateToPlay: () -> Unit,
     navigateToRoute: () -> Unit,

@@ -6,7 +6,7 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.postgrest.from
-import marcos.peakflow.domain.model.User
+import marcos.peakflow.domain.model.user.User
 import marcos.peakflow.domain.repository.AuthRepository
 
 class AuthSupabaseRepositoryImpl(
@@ -68,21 +68,33 @@ class AuthSupabaseRepositoryImpl(
         }
     }
 
+    /**
+     * Metodo para Cambiar la contraseña de una cuenta
+     * @param email: String
+     */
     override suspend fun resetPassword(email: String): Boolean {
         return try {
             supabase.auth.resetPasswordForEmail(email = email)
+            Log.d("AuthRepository", "Contraseña cambiada correctamente")
             true
         }catch (e: Exception){
+            Log.e("AuthRepository", "Error en reset password: ${e.message}")
             false
         }
     }
 
     /**
-     * Metodo para Cambiar la contraseña de una cuenta
-     * @param email: String
+     * Metodo para cerrar sesion
      */
-    override suspend fun closeSession(user: User) {
-        TODO("Not yet implemented")
+    override suspend fun closeSession():Boolean {
+        return try {
+            supabase.auth.signOut()
+            Log.d("AuthRepository", "Sesión cerrada correctamente")
+            true
+        }catch (e: Exception){
+            Log.e("AuthRepository", "Error en sign out: ${e.message}")
+            false
+        }
     }
 
     override suspend fun getAllUsers(): List<User> {
@@ -101,6 +113,7 @@ class AuthSupabaseRepositoryImpl(
             supabase.auth.signInWith(Google)
             true
         } catch (e: Exception) {
+            Log.e("AuthRepository", "Error en registro con google: ${e.message}")
             false
         }
     }

@@ -6,5 +6,5 @@ object RepositoryContainer {
     private val supabase by lazy { PeakFlowApp.getClient() }
 
     val authRepository by lazy { AuthSupabaseRepositoryImpl(supabase) }
-    // Aqí se agregarán más repositorios
+    // Aquí se agregarán más repositorios
 }

@@ -29,7 +29,6 @@
     <string name="gender_female">femenino</string>
     <string name="gender_male">maculino</string>
 
-
     <!--LogIn Screen-->
     <string name="textoInicioSesion">Iniciar sesión en Peak Flow</string>
     <string name="InicioSesionEmail">Iniciar sesión con Email</string>
@@ -50,6 +49,11 @@
 
     <!--Home-->
     <string name="homeTitleScreen">Inicio</string>
+
+    <!--UserPanel-->
+    <string name="userName">Nombre usuario</string>
+    <string name="closeSession">Cerrar Sesión</string>
+
 
     <!--Play-->
     <string name="playTitleScreen">Grabación</string>

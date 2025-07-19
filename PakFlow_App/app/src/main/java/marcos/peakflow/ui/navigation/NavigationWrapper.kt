@@ -14,7 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import marcos.peakflow.ui.screens.afterLogin.home.HomeScreen
 import marcos.peakflow.ui.screens.afterLogin.play.PlayScreen
-import marcos.peakflow.ui.screens.afterLogin.route.RouteScreen
+import marcos.peakflow.ui.screens.afterLogin.Route.RouteScreen
 import marcos.peakflow.ui.screens.afterLogin.trainings.TrainingsScreen
 import marcos.peakflow.ui.screens.afterLogin.userPanel.UserPanelScreen
 import marcos.peakflow.ui.screens.beforeLogin.SessionViewModel
@@ -104,7 +104,8 @@ fun NavigationWrapper() {
                     navigateToPlay = { navController.navigate(Play) },
                     navigateToRoute = { navController.navigate(Route) },
                     navigateToTraining = { navController.navigate(Training) },
-                    navigateBack = { navController.popBackStack() }
+                    navigateBack = { navController.popBackStack() },
+                    navigateToInitial = {navController.navigate(Initial)}
                 )
             }
 

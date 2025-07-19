@@ -1,4 +1,4 @@
-package marcos.peakflow.domain.model
+package marcos.peakflow.domain.model.user
 
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.KSerializer

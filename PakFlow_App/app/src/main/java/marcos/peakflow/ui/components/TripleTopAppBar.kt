@@ -49,7 +49,7 @@ fun TripleTopAppBar(
                 onClick = onLeftClick,
                 modifier = Modifier
                     .weight(0.9f, fill = false)
-                    .padding(horizontal = 5.dp)
+                    .padding(horizontal = 4.dp)
             ) {
                 Icon(
                     painter = painterResource(id = leftIcon),
@@ -66,7 +66,7 @@ fun TripleTopAppBar(
                 fontSize = 20.sp,
                 color = Color.LightGray,
                 modifier = Modifier
-                    .weight(3.5f) // Peso mayor para centrar en el espacio disponible
+                    .weight(3.4f) // Peso mayor para centrar en el espacio disponible
                     .wrapContentWidth(Alignment.CenterHorizontally),
                 textAlign = TextAlign.End
             )
@@ -75,7 +75,7 @@ fun TripleTopAppBar(
             Row(
                 modifier = Modifier
                     .weight(1f, fill = true)
-                    .padding(horizontal = 2.dp),
+                    .padding(horizontal = 4.dp),
                 horizontalArrangement = Arrangement.End
             ) {
                 IconButton(onClick = onMidleClick) {
