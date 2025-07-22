@@ -57,6 +57,7 @@
 
     <!--Play-->
     <string name="playTitleScreen">Grabación</string>
+    <string name="EnableLocationRequest">La aplicación necesita acceder a la ubicación para poder realizar sus funcionalidades basicas </string>
 
     <!--Route-->
     <string name="routeTitleScreen">Seguir Ruta</string>

@@ -3,6 +3,7 @@ package marcos.peakflow.ui.screens
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import marcos.peakflow.data.SupabaseReposImpl.RepositoryContainer
+import marcos.peakflow.ui.screens.afterLogin.play.PlayViewModel
 import marcos.peakflow.ui.screens.afterLogin.userPanel.UserPanelViewModel
 import marcos.peakflow.ui.screens.beforeLogin.logueo.loginWithEmail.LoginWithEmailViewModel
 import marcos.peakflow.ui.screens.beforeLogin.registro.registerWithEmail.SignUpWithEmailViewModel
@@ -21,6 +22,10 @@ class PeakFlowViewModelFactory : ViewModelProvider.Factory {
 
             modelClass.isAssignableFrom(UserPanelViewModel::class.java) -> {
                 UserPanelViewModel(RepositoryContainer.authRepository) as T
+            }
+
+            modelClass.isAssignableFrom(PlayViewModel::class.java)-> {
+                PlayViewModel() as T
             }
 
             //Aquí se asignarán mas viewModels a sus respectivos repositorios

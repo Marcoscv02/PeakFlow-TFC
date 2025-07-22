@@ -79,5 +79,10 @@ dependencies {
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.core)
 
+    // MapLibre
+    implementation(libs.android.sdk)
+    implementation (libs.play.services.location)
+
+
 
 }
