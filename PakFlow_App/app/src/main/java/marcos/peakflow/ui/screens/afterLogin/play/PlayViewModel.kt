@@ -2,7 +2,6 @@ package marcos.peakflow.ui.screens.afterLogin.play
 
 import android.app.Activity
 import android.widget.Toast
-
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +21,7 @@ class PlayViewModel: ViewModel() {
 
 
     /**
-     * Este método lo llama el Activity en el onCreate
+     * Este metodo lo llama el Activity en el onCreate
      *
      *  - Comprueba si hai permiso `areLocationPermissionsGranted`
      *  - Si lo hay, actualiza la variable `_hasLocationPerm`
