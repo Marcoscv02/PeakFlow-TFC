@@ -1,4 +1,4 @@
-package marcos.peakflow.ui.screens.afterLogin.Route
+package marcos.peakflow.ui.screens.afterLogin.route
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background

@@ -11,10 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +33,7 @@ import marcos.peakflow.ui.components.Screen
 import marcos.peakflow.ui.components.StandardTopAppBar
 import marcos.peakflow.ui.screens.PeakFlowViewModelFactory
 import marcos.peakflow.ui.theme.Black
+import marcos.peakflow.ui.theme.Gray
 import org.maplibre.android.MapLibre
 import org.maplibre.android.WellKnownTileServer
 import org.maplibre.android.camera.CameraPosition
@@ -54,6 +59,10 @@ fun PlayScreen(
     val context = LocalContext.current
     val activity = context as? Activity
 
+    var isRunning by remember { mutableStateOf(false) }
+
+
+    //Lanza el chequeo de permisos cuando la vista se infle por primera vez
     LaunchedEffect(Unit) {
         activity?.let {
             viewModel.checkOrRequestPermissions(it)
@@ -80,7 +89,7 @@ fun PlayScreen(
             )
         }
     ) {
-        // Aquí va el contenido principal
+        //Mapa
         Column (
             modifier = Modifier
                 .fillMaxSize()
@@ -100,6 +109,8 @@ fun PlayScreen(
                 )
             }
 
+            TopRecordingAppBar(isRunning, onPlayPauseClick = {isRunning = !isRunning})
+            //panel de datos en tiempo real
             DataPanel()
 
         }
@@ -182,8 +193,55 @@ fun MapLibreLocationView() {
         },
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp)
+            .height(350.dp)
     )
+}
+
+@Composable
+fun TopRecordingAppBar(
+    isRunning:Boolean,
+    onPlayPauseClick: () -> Unit
+){
+    Surface(
+        color = Gray,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 13.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(onClick = {null}) {
+                Icon(
+                    painter = painterResource(id = R.drawable.running),
+                    contentDescription = "leftIcon",
+                    tint = Color.LightGray,
+                    modifier = Modifier.size(80.dp)
+                )
+            }
+
+            Text(
+                text = "Carrera",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color.LightGray,
+            )
+
+            IconButton(onClick = onPlayPauseClick) {
+                Icon(
+                    painter = if (isRunning) painterResource(R.drawable.play) else painterResource(R.drawable.pause),
+                    contentDescription = "RightIcon",
+                    tint = if (isRunning) Color.Green else Color.Red,
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -191,9 +249,11 @@ fun DataPanel() {
 
     Column(
         modifier = Modifier
-            .size(400.dp)
+            .height(300.dp)
             .fillMaxWidth()
-            .padding(24.dp),
+            .padding(vertical = 5.dp)
+            .padding(horizontal = 20.dp)
+        ,
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -201,6 +261,14 @@ fun DataPanel() {
 
         // Distancia
         StatBlock(label = "Distancia", value = "7.2 km", fontSize = 34.sp)
+
+        // Separador horizontal
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth(),
+            color = Color.Gray.copy(alpha = 0.3f),
+            thickness = 1.dp
+        )
 
         // Tiempo y Ritmo
         Row(
@@ -219,6 +287,7 @@ fun DataPanel() {
             StatBlock(label = "Desnivel +", value = "120 m")
             StatBlock(label = "Frecuencia", value = "145 ppm")
         }
+
 
 
     }

@@ -1,4 +1,4 @@
-package marcos.peakflow.data.SupabaseReposImpl
+package marcos.peakflow.data.supabasereposImpl
 
 import android.util.Log
 import io.github.jan.supabase.SupabaseClient

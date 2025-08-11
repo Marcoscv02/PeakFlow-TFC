@@ -3,7 +3,7 @@ package marcos.peakflow.ui.screens.afterLogin.userPanel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import marcos.peakflow.data.SupabaseReposImpl.AuthSupabaseRepositoryImpl
+import marcos.peakflow.data.supabasereposImpl.AuthSupabaseRepositoryImpl
 
 class UserPanelViewModel(
     private val authRepository: AuthSupabaseRepositoryImpl

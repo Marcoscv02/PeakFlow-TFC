@@ -18,7 +18,7 @@ import marcos.peakflow.ui.theme.BackgoundNavSelectedButton
 import marcos.peakflow.ui.theme.Gray
 import marcos.peakflow.ui.theme.RedPeakFlow
 
-// Definimos un sello para representar las rutas
+// Definimos una clase sellada para representar cada ruta
 sealed class Screen(
     val route: String,
     val title: Int,
