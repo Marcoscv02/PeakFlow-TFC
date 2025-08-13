@@ -6,10 +6,13 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import marcos.peakflow.R
+import marcos.peakflow.data.supabasereposImpl.RouteSupabaseRepositoryImpl
 import org.maplibre.android.location.permissions.PermissionsListener
 import org.maplibre.android.location.permissions.PermissionsManager
 
-class PlayViewModel: ViewModel() {
+class PlayViewModel(
+    private val routeRepository: RouteSupabaseRepositoryImpl
+): ViewModel() {
 
     //Esta variable  almacena si el permiso de ubicación está concedido
     private val _hasLocationPerm = MutableStateFlow(false)

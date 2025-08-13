@@ -25,7 +25,7 @@ class PeakFlowViewModelFactory : ViewModelProvider.Factory {
             }
 
             modelClass.isAssignableFrom(PlayViewModel::class.java)-> {
-                PlayViewModel() as T
+                PlayViewModel(RepositoryContainer.routeRepository) as T
             }
 
             //Aquí se asignarán mas viewModels a sus respectivos repositorios

@@ -1,4 +1,11 @@
 package marcos.peakflow.domain.usecase.route
 
-class ResumeRouteUseCase {
+import marcos.peakflow.domain.service.GpsService
+
+class ResumeRouteUseCase(
+    private val gpsService: GpsService
+) {
+    operator fun invoke() {
+        gpsService.resume()
+    }
 }
