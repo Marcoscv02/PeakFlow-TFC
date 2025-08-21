@@ -1,6 +1,8 @@
-package marcos.peakflow.data.supabasereposImpl
+package marcos.peakflow.data
 
 import marcos.peakflow.app.PeakFlowApp
+import marcos.peakflow.data.supabasereposimpl.AuthSupabaseRepositoryImpl
+import marcos.peakflow.data.supabasereposimpl.RouteSupabaseRepositoryImpl
 
 object RepositoryContainer {
     private val supabase by lazy { PeakFlowApp.getClient() }

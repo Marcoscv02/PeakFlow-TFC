@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
-import marcos.peakflow.data.supabasereposImpl.AuthSupabaseRepositoryImpl
+import marcos.peakflow.data.supabasereposimpl.AuthSupabaseRepositoryImpl
 import marcos.peakflow.domain.model.user.User
 import marcos.peakflow.ui.screens.beforeLogin.registro.UserState
 

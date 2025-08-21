@@ -1,7 +1,7 @@
 package marcos.peakflow.domain.usecase.route
 
 import kotlinx.datetime.Clock
-import marcos.peakflow.data.supabasereposImpl.RouteSupabaseRepositoryImpl
+import marcos.peakflow.data.supabasereposimpl.RouteSupabaseRepositoryImpl
 import marcos.peakflow.domain.model.route.Route
 import marcos.peakflow.domain.service.GpsService
 
@@ -12,7 +12,6 @@ class StartRouteUseCase(
 ) {
     suspend operator fun invoke(userId: String, name: String?): Result<Route> {
         val route = Route(
-            id = null,
             userId = userId,
             name = name,
             startTime = Clock.System.now(),

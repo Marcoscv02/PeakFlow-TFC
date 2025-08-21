@@ -2,7 +2,7 @@ package marcos.peakflow.ui.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import marcos.peakflow.data.supabasereposImpl.RepositoryContainer
+import marcos.peakflow.data.RepositoryContainer
 import marcos.peakflow.ui.screens.afterLogin.play.PlayViewModel
 import marcos.peakflow.ui.screens.afterLogin.userPanel.UserPanelViewModel
 import marcos.peakflow.ui.screens.beforeLogin.logueo.loginWithEmail.LoginWithEmailViewModel

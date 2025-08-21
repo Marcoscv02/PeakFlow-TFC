@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import marcos.peakflow.R
-import marcos.peakflow.data.supabasereposImpl.RouteSupabaseRepositoryImpl
+import marcos.peakflow.data.supabasereposimpl.RouteSupabaseRepositoryImpl
 import org.maplibre.android.location.permissions.PermissionsListener
 import org.maplibre.android.location.permissions.PermissionsManager
 

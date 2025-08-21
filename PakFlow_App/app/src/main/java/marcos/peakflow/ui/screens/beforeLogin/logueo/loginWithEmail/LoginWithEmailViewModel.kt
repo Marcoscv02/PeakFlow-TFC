@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import marcos.peakflow.data.supabasereposImpl.AuthSupabaseRepositoryImpl
+import marcos.peakflow.data.supabasereposimpl.AuthSupabaseRepositoryImpl
 import marcos.peakflow.ui.screens.beforeLogin.logueo.UserState
 
 @Suppress("UNUSED_EXPRESSION", "UnusedDataClassCopyResult")
