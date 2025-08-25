@@ -1,9 +1,9 @@
 package marcos.peakflow.domain.usecase.route
 
-import marcos.peakflow.domain.service.GpsService
+import marcos.peakflow.data.services.AndroidGpsService
 
 class PauseRouteUseCase(
-    private val gpsService: GpsService
+    private val gpsService: AndroidGpsService
 ) {
     operator fun invoke() {
         gpsService.pause()
