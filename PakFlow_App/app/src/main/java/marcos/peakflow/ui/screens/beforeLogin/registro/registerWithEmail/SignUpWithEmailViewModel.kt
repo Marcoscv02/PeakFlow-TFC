@@ -12,11 +12,12 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import marcos.peakflow.data.supabasereposimpl.AuthSupabaseRepositoryImpl
 import marcos.peakflow.domain.model.user.User
+import marcos.peakflow.domain.repository.AuthRepository
 import marcos.peakflow.ui.screens.beforeLogin.registro.UserState
 
 class SignUpWithEmailViewModel(
-    private val authRepository: AuthSupabaseRepositoryImpl) :
-    ViewModel() {
+    private val authRepository: AuthRepository
+) : ViewModel() {
 
     //Estado unificado
     private val _userState = MutableStateFlow(UserState())

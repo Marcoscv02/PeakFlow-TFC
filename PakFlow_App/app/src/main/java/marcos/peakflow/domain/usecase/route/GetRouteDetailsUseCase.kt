@@ -1,11 +1,11 @@
 package marcos.peakflow.domain.usecase.route
 
-import marcos.peakflow.data.supabasereposimpl.RouteSupabaseRepositoryImpl
 import marcos.peakflow.domain.model.route.Route
 import marcos.peakflow.domain.model.route.RoutePoint
+import marcos.peakflow.domain.repository.RouteRepository
 
 class GetRouteDetailsUseCase(
-    private val routeRepository: RouteSupabaseRepositoryImpl
+    private val routeRepository: RouteRepository
 ) {
     suspend operator fun invoke(routeId: String): Result<Pair<Route, List<RoutePoint>>> {
         val route = routeRepository.getRouteById(routeId)

@@ -4,17 +4,14 @@ import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import marcos.peakflow.data.supabasereposimpl.AuthSupabaseRepositoryImpl
+import marcos.peakflow.domain.repository.AuthRepository
 import marcos.peakflow.ui.screens.beforeLogin.logueo.UserState
 
 @Suppress("UNUSED_EXPRESSION", "UnusedDataClassCopyResult")
 class LoginWithEmailViewModel(
-    private val authRepository: AuthSupabaseRepositoryImpl
+    private val authRepository: AuthRepository
 ) : ViewModel (){
 
     private val _userState = MutableStateFlow(UserState())
@@ -79,7 +76,6 @@ class LoginWithEmailViewModel(
                 _userState.update {
                     it.copy(
                         isLoading = false,
-                        // Aquí podrías añadir lógica adicional como isLoggedIn = true
                     )
                 }
 

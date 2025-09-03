@@ -10,4 +10,5 @@ interface AuthRepository {
     suspend fun getAllUsers() : List<User>
     suspend fun deleteUser(user: User): Boolean
     suspend fun signInWithGoogle(): Boolean
+    suspend fun getCurrentUser(): User?
 }

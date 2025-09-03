@@ -116,7 +116,7 @@ fun LoginWithEmailScreen(
         Spacer(modifier = Modifier.weight(1f))
 
 
-        //Boton de REGISTRO
+        //Botón de REGISTRO
         LoginButton(true) {
             viewModel.loginUser { success ->
                 loginSuccess = success

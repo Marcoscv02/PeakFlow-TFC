@@ -1,12 +1,12 @@
 package marcos.peakflow.domain.usecase.route
 
 import kotlinx.datetime.Clock
-import marcos.peakflow.data.services.AndroidGpsService
 import marcos.peakflow.domain.model.route.Route
+import marcos.peakflow.domain.service.GpsService
 
 
 class StartRouteUseCase(
-    private val gpsService: AndroidGpsService
+    private val gpsService: GpsService
 ) {
     operator fun invoke(userId: String, name: String?): Route {
         val route = Route(

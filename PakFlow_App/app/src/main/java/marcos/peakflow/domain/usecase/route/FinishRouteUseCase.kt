@@ -2,10 +2,10 @@ package marcos.peakflow.domain.usecase.route
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import marcos.peakflow.data.services.AndroidGpsService
-import marcos.peakflow.data.supabasereposimpl.RouteSupabaseRepositoryImpl
 import marcos.peakflow.domain.cache.RoutePointsCache
 import marcos.peakflow.domain.model.route.Route
+import marcos.peakflow.domain.repository.RouteRepository
+import marcos.peakflow.domain.service.GpsService
 import marcos.peakflow.domain.util.calculateAvgHeartRate
 import marcos.peakflow.domain.util.calculateDistance
 import marcos.peakflow.domain.util.calculateDurationSec
@@ -14,9 +14,9 @@ import marcos.peakflow.domain.util.calculateElevationLoss
 import marcos.peakflow.domain.util.calculateMovingTime
 
 class FinishRouteUseCase(
-    private val routeRepository: RouteSupabaseRepositoryImpl,
+    private val routeRepository: RouteRepository,
     private val cache: RoutePointsCache,
-    private val gpsService: AndroidGpsService
+    private val gpsService: GpsService
 ) {
 
     suspend operator fun invoke(

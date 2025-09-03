@@ -11,6 +11,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -35,11 +37,13 @@ fun UserPanelScreen(
     navigateToInitial: () -> Unit
 ) {
     val viewModel : UserPanelViewModel = viewModel(factory = PeakFlowViewModelFactory())
+    val userName by viewModel.userName.collectAsState()
+
 
     Scaffold(
         topBar = {
             TripleTopAppBar(
-                title = stringResource(R.string.userName),
+                title = userName,
                 onLeftClick = navigateBack,
                 leftIcon = R.drawable.back,
                 onMidleClick = {},

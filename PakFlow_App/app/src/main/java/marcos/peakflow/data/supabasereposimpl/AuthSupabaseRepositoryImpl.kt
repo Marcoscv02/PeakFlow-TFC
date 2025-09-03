@@ -6,6 +6,7 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.postgrest.from
+import kotlinx.datetime.LocalDate
 import marcos.peakflow.domain.model.user.User
 import marcos.peakflow.domain.repository.AuthRepository
 
@@ -67,6 +68,26 @@ class AuthSupabaseRepositoryImpl(
             false
         }
     }
+
+    override suspend fun getCurrentUser(): User? {
+        return try {
+            val sessionUser = supabase.auth.currentUserOrNull()
+            sessionUser?.let {
+                User(
+                    id = it.id,
+                    email = it.email,
+                    username = it.userMetadata?.get("name") as? String,
+                    // Si guardaste más datos en metadata:
+                    birthdate = it.userMetadata?.get("birthdate") as? LocalDate?,
+                    gender = it.userMetadata?.get("gender") as? String
+                )
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+
 
     /**
      * Metodo para Cambiar la contraseña de una cuenta

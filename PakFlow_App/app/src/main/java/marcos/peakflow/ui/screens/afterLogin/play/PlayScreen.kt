@@ -7,13 +7,7 @@ import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,7 +53,10 @@ fun PlayScreen(
     val context = LocalContext.current
     val activity = context as? Activity
 
-    var isRunning by remember { mutableStateOf(false) }
+    val isRunning = viewModel.isRunning.collectAsState()
+    val routeStarted =viewModel.isRecording.collectAsState()
+
+    val elapsed by viewModel.elapsedTime.collectAsState()
 
 
     //Lanza el chequeo de permisos cuando la vista se infle por primera vez
@@ -96,7 +93,7 @@ fun PlayScreen(
                 .background(Black)
         ){
             if (hasPermission) {
-                MapLibreLocationView()
+                MapLibreLocationView(viewModel)
             } else {
                 Text(
                     text = stringResource(id = R.string.EnableLocationRequest),
@@ -109,9 +106,13 @@ fun PlayScreen(
                 )
             }
 
-            TopRecordingAppBar(isRunning, onPlayPauseClick = {isRunning = !isRunning})
+            TopRecordingAppBar(
+                routeStarted = routeStarted.value,
+                isRunning = isRunning.value,
+                onPlayPauseClick = { viewModel.toggleRunning()
+                })
             //panel de datos en tiempo real
-            DataPanel()
+            DataPanel(viewModel)
 
         }
     }
@@ -123,73 +124,89 @@ fun PlayScreen(
  */
 @SuppressLint("MissingPermission")
 @Composable
-fun MapLibreLocationView() {
+fun MapLibreLocationView(
+    viewModel: PlayViewModel
+) {
     val context = LocalContext.current
-    val mapTilerKey = "ayEMMbyitB7UOUpklBr6"
-    val styleUrl = "https://api.maptiler.com/maps/hybrid/style.json?key=$mapTilerKey"
+    val mapTilerKey = viewModel.mapTilerKey
+    val styleUrl = viewModel.styleUrl
+    val userLocation by viewModel.userLocation.collectAsState()
+
+    // guardamos la referencia del MapLibreMap para poder mover la cámara desde el update block
+    val mapRef = remember { mutableStateOf<org.maplibre.android.maps.MapLibreMap?>(null) }
+
+    // Cuando el Composable desaparezca, detenemos las actualizaciones del ViewModel
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.stopLocationUpdates()
+        }
+    }
 
     AndroidView(
-        factory = { ctx -> //ctx es el más preciso dentro del AndroidView porque garantiza que es el contexto correcto para esa vista.
-            // Inicializa MapLibre solo si no se hizo antes
-            MapLibre.getInstance(
-                ctx,
-                mapTilerKey,
-                WellKnownTileServer.MapTiler
-            )
+        factory = { ctx ->
+            // Inicializa MapLibre (solo si no se hizo)
+            MapLibre.getInstance(ctx, mapTilerKey, WellKnownTileServer.MapTiler)
 
-            //Crea la vista del mapView usando en contexto de android
             val mapView = MapView(ctx)
-            //Callback que se llama cuando el mapa está libre para ser usado
             mapView.getMapAsync { mapLibreMap ->
+                // Guardamos la referencia
+                mapRef.value = mapLibreMap
 
-                //Establece el estilo visual del mapa usando un archivo .json remoto
-                mapLibreMap.setStyle(
-                    Style.Builder().fromUri(styleUrl)
-                ) { style ->
-
-                    //Obtiene el componente de ubicación, que es responsable de mostrar y actualizar la posición del usuario.
-                    val locationComponent = mapLibreMap.locationComponent
-
-                    //Esto define cómo se verá el indicador de ubicación
+                // Establece el estilo
+                mapLibreMap.setStyle(Style.Builder().fromUri(styleUrl)) { style ->
+                    // Configuración visual del LocationComponent (la parte UI)
                     val options = LocationComponentOptions.builder(ctx)
                         .pulseEnabled(true)
                         .pulseColor(android.graphics.Color.CYAN)
                         .foregroundTintColor(android.graphics.Color.BLUE)
                         .build()
 
-                    //Aquí se define cómo y cuándo se activa la ubicación:
-
                     val activationOptions = LocationComponentActivationOptions.builder(ctx, style)
                         .locationComponentOptions(options)
-                        .useDefaultLocationEngine(true) //usa el motor de ubicación por defecto.
-                        .locationEngineRequest( //frecuencia y precisión de actualizaciones:
+                        .useDefaultLocationEngine(true)
+                        .locationEngineRequest(
                             LocationEngineRequest.Builder(750L)
                                 .setFastestInterval(750L)
                                 .setPriority(LocationEngineRequest.PRIORITY_HIGH_ACCURACY)
                                 .build()
                         )
-
                         .build()
 
-                    locationComponent.activateLocationComponent(activationOptions) //Activa el componente de ubicación con las opciones anteriores.
-                    locationComponent.isLocationComponentEnabled = true //Lo habilita visualmente.
-                    locationComponent.cameraMode = CameraMode.TRACKING //Configura el modo de cámara para seguir al usuario mientras se mueve.
+                    // Activa el LocationComponent (UI)
+                    mapLibreMap.locationComponent.activateLocationComponent(activationOptions)
+                    mapLibreMap.locationComponent.isLocationComponentEnabled = true
+                    mapLibreMap.locationComponent.cameraMode = CameraMode.TRACKING
 
+                    // Crea el engine de la UI y se lo pasa al ViewModel para suscribirse.
+                    val engine = mapLibreMap.locationComponent.locationEngine
+                        ?: org.maplibre.android.location.engine.LocationEngineDefault.getDefaultLocationEngine(ctx)
+                    viewModel.startLocationUpdates(engine)
 
-                    //Obtiene la ultima localizacion conocida del usuario y mueve la camara ahí para que esta apunte al usuario
-                    val lastLocation = locationComponent.lastKnownLocation
-                    if (lastLocation != null) {
-                        val userLatLng = LatLng(lastLocation.latitude, lastLocation.longitude)
+                    // Si ya hay una ubicación conocida en el componente, centrar cámara (arranque rápido)
+                    val lastLoc = mapLibreMap.locationComponent.lastKnownLocation
+                    if (lastLoc != null) {
+                        val userLatLng = LatLng(lastLoc.latitude, lastLoc.longitude)
                         val cameraPosition = CameraPosition.Builder()
                             .target(userLatLng)
                             .zoom(17.0)
                             .build()
-
                         mapLibreMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
                     }
                 }
             }
             mapView
+        },
+        update = { mapView ->
+            // Cada recomposición: si hay mapa y nueva userLocation -> mover cámara suavemente
+            val map = mapRef.value
+            val loc = userLocation
+            if (map != null && loc != null) {
+                val camera = CameraPosition.Builder()
+                    .target(loc)
+                    .zoom(17.0)
+                    .build()
+                map.animateCamera(CameraUpdateFactory.newCameraPosition(camera), 500)
+            }
         },
         modifier = Modifier
             .fillMaxWidth()
@@ -199,7 +216,8 @@ fun MapLibreLocationView() {
 
 @Composable
 fun TopRecordingAppBar(
-    isRunning:Boolean,
+    routeStarted: Boolean,
+    isRunning: Boolean,
     onPlayPauseClick: () -> Unit
 ){
     Surface(
@@ -245,7 +263,12 @@ fun TopRecordingAppBar(
 }
 
 @Composable
-fun DataPanel() {
+fun DataPanel(
+    viewModel: PlayViewModel
+) {
+    val elapsed by viewModel.elapsedTime.collectAsState()
+    val tiempo = formatTime(elapsed)
+
 
     Column(
         modifier = Modifier
@@ -275,7 +298,7 @@ fun DataPanel() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            StatBlock(label = "Tiempo", value = "00:38:50")
+            StatBlock(label = "Tiempo", value = tiempo)
             StatBlock(label = "Ritmo", value = "5:23 /km")
         }
 
@@ -300,4 +323,13 @@ fun StatBlock(label: String, value: String, fontSize: TextUnit = 24.sp) {
         Text(text = value, fontSize = fontSize, fontWeight = FontWeight.Bold, color = Color.White)
     }
 }
+
+fun formatTime(ms: Long): String {
+    val totalSec = ms / 1000
+    val h = totalSec / 3600
+    val m = (totalSec % 3600) / 60
+    val s = totalSec % 60
+    return String.format("%02d:%02d:%02d", h, m, s)
+}
+
 
