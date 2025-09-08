@@ -2,18 +2,28 @@ package marcos.peakflow.ui.screens.afterLogin.play
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.location.Location
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import marcos.peakflow.R
-import marcos.peakflow.domain.repository.RouteRepository
+import marcos.peakflow.domain.cache.RoutePointsCache
+import marcos.peakflow.domain.model.route.Route
+import marcos.peakflow.domain.model.route.RoutePoint
+import marcos.peakflow.domain.repository.AuthRepository
+import marcos.peakflow.domain.usecase.route.AddRoutePointUseCase
+import marcos.peakflow.domain.usecase.route.FinishRouteUseCase
+import marcos.peakflow.domain.usecase.route.PauseRouteUseCase
+import marcos.peakflow.domain.usecase.route.ResumeRouteUseCase
+import marcos.peakflow.domain.usecase.route.StartRouteUseCase
+import marcos.peakflow.domain.util.calculateCurrentSpeed
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.location.engine.LocationEngine
 import org.maplibre.android.location.engine.LocationEngineCallback
@@ -21,9 +31,15 @@ import org.maplibre.android.location.engine.LocationEngineRequest
 import org.maplibre.android.location.engine.LocationEngineResult
 import org.maplibre.android.location.permissions.PermissionsListener
 import org.maplibre.android.location.permissions.PermissionsManager
+import kotlinx.datetime.Clock
 
 class PlayViewModel(
-    routeRepository: RouteRepository
+    private val startRouteUseCase: StartRouteUseCase,
+    private val pauseRouteUseCase: PauseRouteUseCase,
+    private val resumeRouteUseCase: ResumeRouteUseCase,
+    private val finishRouteUseCase: FinishRouteUseCase,
+    private val addRoutePointUseCase: AddRoutePointUseCase,
+    private val authRepository: AuthRepository,
 ): ViewModel() {
 
     //Esta variable  almacena si el permiso de ubicación está concedido
@@ -48,7 +64,11 @@ class PlayViewModel(
 
     //Indica si hay una grabacion en curso
     private val _isRecording = MutableStateFlow(false)
-    val isRecording: StateFlow<Boolean> = _isRunning
+    val isRecording: StateFlow<Boolean> = _isRecording
+
+    // Indica si el mapa/engine está listo
+    private val _mapReady = MutableStateFlow(false)
+    val mapReady: StateFlow<Boolean> = _mapReady
 
     private var job: Job? = null
 
@@ -69,22 +89,26 @@ class PlayViewModel(
         }
     }
 
+    //Ruta activa
+    private lateinit var route: Route
+
 
 
     /**
      * Este metodo lo llama el Activity en el onCreate
      *
-     *  - Comprueba si hai permiso `areLocationPermissionsGranted`
-     *  - Si lo hay, actualiza la variable `_hasLocationPerm`
-     *  - Si no, crea y lanza la petición de permisos
+     * - Comprueba si hai permiso `areLocationPermissionsGranted`
+     * - Si lo hay, actualiza la variable `_hasLocationPerm`
+     * - Si no, crea y lanza la petición de permisos
      *
-     *  @param Activity
+     * @param Activity
      */
     fun checkOrRequestPermissions(activity: Activity) {
         if (PermissionsManager.areLocationPermissionsGranted(activity)) {
             _hasLocationPerm.value = true
         } else {
             permissionsManager = PermissionsManager(object : PermissionsListener {
+
 
                 override fun onExplanationNeeded(msgs: List<String>) {
                     val message = activity.getString(R.string.EnableLocationRequest)
@@ -118,7 +142,9 @@ class PlayViewModel(
 
     /**
      * Inicia las actualizaciones de ubicación usando el LocationEngine que crea la UI.
-     * El ViewModel **no** crea contextos UI ni MapView; solo suscribe/remueve callbacks.
+     * El ViewModel **no** crea contextos UI ni MapView; solo subscribe/remueve callbacks.
+     *
+     * @param LocationEngine engine
      */
     @SuppressLint("MissingPermission")
     fun startLocationUpdates(engine: LocationEngine) {
@@ -131,7 +157,7 @@ class PlayViewModel(
         try {
             engine.getLastLocation(locationCallback)
         } catch (e: Exception) {
-            Log.e("PlayViewModel", "Error al solicitar la ubicacion actual del usuario", e)
+            Log.e("PlayViewModel", "Error al solicitar la ubicación actual del usuario", e)
         }
 
         // Solicitar updates periódicos
@@ -146,8 +172,6 @@ class PlayViewModel(
             Log.e("PlayViewModel", "Error al solicitar actualizaciones de ubicación", e)
         }
     }
-
-
 
     /**
      * Para las actualizaciones y limpia referencias
@@ -164,19 +188,75 @@ class PlayViewModel(
 
 
     /**
-     * Si por alguna razón recibes Location desde otra parte (broadcast, sensor...), puedes actualizar manualmente
+     * Metodo que se llama cuando se inicia un entrenamiento
      */
-    fun updateLocation(location: Location) {
-        _userLocation.value = LatLng(location.latitude, location.longitude)
+    fun onStartRoute() {
+        viewModelScope.launch {
+            try {
+                // Obtiene usuario y ruta en IO
+                val currentUser = withContext(Dispatchers.IO) { authRepository.getCurrentUser() }
+                val newRoute = withContext(Dispatchers.IO) { startRouteUseCase(currentUser?.id) }
+
+                route = newRoute // guarda ruta en caché
+
+                // Inicia cronómetro
+                startTimer()
+
+                _isRecording.value = true
+                Log.i("PlayViewModel", "Entrenamiento iniciado")
+
+            } catch (e: Exception) {
+                _isRecording.value = false
+                Log.e("PlayViewModel", "Error al iniciar ruta", e)
+            }
+        }
     }
 
+    /**
+     * Metodo que se llama cuando se finaliza un entrenamiento
+     * @param String:name
+     */
+    fun onFinishRoute(name: String) {
+        viewModelScope.launch {
+            val result = finishRouteUseCase(
+                route = route,          // tu ruta activa
+                name = name
+            )
+
+            result.onSuccess {
+                Log.i("PlayViewModel", "Ruta finalizada y guardada: $it")
+            }.onFailure {
+                Log.e("PlayViewModel", "Error al finalizar ruta", it)
+            }
+        }
+    }
+
+
+
+    /**
+     * Metodo que se llama cuando se pausa/reanuda un entrenamiento
+     */
     fun toggleRunning() {
         if (_isRunning.value) {
             stopTimer()
+            pauseRouteUseCase()
+            _isRunning.value = false
+            Log.i("PlayViewModel", " Entrenamiento pausado")
         } else {
-            _isRecording.value = true // se marca en el primer arranque
             startTimer()
+            resumeRouteUseCase()
+            _isRunning.value = true
+            Log.i("PlayViewModel", " Entrenamiento reanudado")
+
+
         }
+    }
+
+    /**
+     * Metodo que se encarga de poner el estado de la variable _mapReady a true cuando se llama
+     */
+    fun setMapReady() {
+        _mapReady.value = true
     }
 
 
@@ -189,8 +269,27 @@ class PlayViewModel(
         _isRunning.value = true
         job = viewModelScope.launch {
             val start = System.currentTimeMillis() - _elapsedTime.value
+            val cache = RoutePointsCache()
+            val points = cache.getAll()
+
             while (_isRunning.value) {
                 _elapsedTime.value = System.currentTimeMillis() - start
+
+                // Cada segundo guardamos un punto de la ruta
+                _userLocation.value?.let { latLng ->
+                    val point = RoutePoint(
+                        routeId = null,
+                        latitude = latLng.latitude,
+                        longitude = latLng.longitude,
+                        timestamp = Clock.System.now(),
+                        speed = calculateCurrentSpeed(points),
+                        altitude = latLng.altitude,
+                        heartRate = null //Implementacion futura
+                    )
+                    addRoutePointUseCase(point)
+                }
+
+
                 delay(1000L)
             }
         }

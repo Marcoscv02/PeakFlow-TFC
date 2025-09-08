@@ -6,6 +6,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import marcos.peakflow.data.RepositoryContainer
 
 class PeakFlowApp : Application() {
 
@@ -33,6 +34,9 @@ class PeakFlowApp : Application() {
                 install(Postgrest)
                 Log.d("Connection", "Conexión establecida con Supabase")
             }
+            //Importante inicializar contenedor de repositorios después del supabase client
+            RepositoryContainer.init(this)
+
         } catch (e: Exception) {
             Log.e("SupabaseInit", "Error al inicializar Supabase: ${e.message}")
         }

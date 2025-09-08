@@ -1,7 +1,6 @@
 package marcos.peakflow.domain.usecase.route
 
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import marcos.peakflow.domain.cache.RoutePointsCache
 import marcos.peakflow.domain.model.route.Route
 import marcos.peakflow.domain.repository.RouteRepository
@@ -21,7 +20,7 @@ class FinishRouteUseCase(
 
     suspend operator fun invoke(
         route: Route,
-        startTime: Instant,
+        name: String
     ): Result<Route> {
         gpsService.stop()
 
@@ -34,7 +33,7 @@ class FinishRouteUseCase(
 
         // Calcular métricas finales
         val distance = calculateDistance(points)
-        val durationSec = calculateDurationSec(startTime, Clock.System.now())
+        val durationSec = calculateDurationSec(route.startTime, Clock.System.now())
         val movingSec = calculateMovingTime(points)
         val avgSpeed = if (durationSec > 0) distance / durationSec else 0.0
         val maxSpeed = points.maxOfOrNull { it.speed ?: 0.0 }
@@ -45,6 +44,7 @@ class FinishRouteUseCase(
 
 
         val updatedRoute = route.copy(
+            name = name,
            endTime = Clock.System.now(),
            distance = distance,
            durationSec = durationSec,

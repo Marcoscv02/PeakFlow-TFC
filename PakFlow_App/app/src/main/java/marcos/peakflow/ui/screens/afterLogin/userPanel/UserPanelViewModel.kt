@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import marcos.peakflow.data.supabasereposimpl.AuthSupabaseRepositoryImpl
+import marcos.peakflow.domain.repository.AuthRepository
 
 class UserPanelViewModel(
-    private val authRepository: AuthSupabaseRepositoryImpl
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _userName = MutableStateFlow<String>("")
@@ -18,7 +18,7 @@ class UserPanelViewModel(
         viewModelScope.launch {
             // Supabase mantiene el usuario actual en auth
             val currentUser = authRepository.getCurrentUser()
-            _userName.value = currentUser?.username ?: "Invitado"
+            _userName.value = currentUser?.username ?: "Sin Nombre"
         }
     }
 

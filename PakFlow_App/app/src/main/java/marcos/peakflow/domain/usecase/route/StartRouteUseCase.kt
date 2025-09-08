@@ -8,10 +8,10 @@ import marcos.peakflow.domain.service.GpsService
 class StartRouteUseCase(
     private val gpsService: GpsService
 ) {
-    operator fun invoke(userId: String, name: String?): Route {
+    operator fun invoke(userId: String?): Route {
         val route = Route(
-            userId = userId,
-            name = name,
+            userId = userId.toString(),
+            name = null,
             startTime = Clock.System.now(),
             endTime = null,
             distance = 0.0,

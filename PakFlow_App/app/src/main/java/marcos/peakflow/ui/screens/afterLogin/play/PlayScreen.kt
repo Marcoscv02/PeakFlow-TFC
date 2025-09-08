@@ -4,6 +4,7 @@ package marcos.peakflow.ui.screens.afterLogin.play
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import marcos.peakflow.R
+import marcos.peakflow.domain.util.formatTime
 import marcos.peakflow.ui.components.BottomNavBar
 import marcos.peakflow.ui.components.Screen
 import marcos.peakflow.ui.components.StandardTopAppBar
@@ -49,15 +51,15 @@ fun PlayScreen(
     navigateBack: () -> Unit
 ) {
     val viewModel : PlayViewModel = viewModel(factory = PeakFlowViewModelFactory())
-
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val isRunning = viewModel.isRunning.collectAsState()
-    val routeStarted =viewModel.isRecording.collectAsState()
+    val isRunning by viewModel.isRunning.collectAsState()
+    val isRecording by viewModel.isRecording.collectAsState()
+    val hasPermission by viewModel.hasLocationPerm.collectAsState()
+    val mapReady by viewModel.mapReady.collectAsState()
 
-    val elapsed by viewModel.elapsedTime.collectAsState()
-
+    var showSaveDialog by remember { mutableStateOf(false) }
 
     //Lanza el chequeo de permisos cuando la vista se infle por primera vez
     LaunchedEffect(Unit) {
@@ -66,14 +68,24 @@ fun PlayScreen(
         }
     }
 
-    val hasPermission by viewModel.hasLocationPerm.collectAsState()
 
     Scaffold(
+
         topBar = { StandardTopAppBar(
             title = stringResource(R.string.playTitleScreen),
             onLeftClick = { navigateBack ()},
             leftIcon = R.drawable.back,
-            onRightClick = {  },
+            onRightClick = {
+                if (isRecording) {
+                    showSaveDialog = true
+                } else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.mustStartRoute),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            },
             rightIcon = R.drawable.save
         ) },
         bottomBar = {
@@ -106,13 +118,29 @@ fun PlayScreen(
                 )
             }
 
+            //Barra superior de panel de datos
             TopRecordingAppBar(
-                routeStarted = routeStarted.value,
-                isRunning = isRunning.value,
-                onPlayPauseClick = { viewModel.toggleRunning()
+                isRunning = isRunning,
+                enabled = hasPermission && mapReady,
+                onPlayPauseClick = {
+                    if (isRecording){
+                        viewModel.toggleRunning()
+                    }else{
+                      viewModel.onStartRoute()
+                    }
+
                 })
             //panel de datos en tiempo real
             DataPanel(viewModel)
+
+            SaveRouteDialog(
+                showDialog = showSaveDialog,
+                onDismiss = { showSaveDialog = false },
+                onConfirm = { routeName ->
+                    viewModel.onFinishRoute(routeName)
+                    showSaveDialog = false
+                }
+            )
 
         }
     }
@@ -121,6 +149,8 @@ fun PlayScreen(
 
 /**
  * Metodo que crea la la vista de mapa embebida en la UI
+ * @param ViewModel
+ *
  */
 @SuppressLint("MissingPermission")
 @Composable
@@ -139,6 +169,7 @@ fun MapLibreLocationView(
     DisposableEffect(Unit) {
         onDispose {
             viewModel.stopLocationUpdates()
+            // opcional: podríamos viewModel.setMapNotReady() si implementas eso
         }
     }
 
@@ -177,10 +208,13 @@ fun MapLibreLocationView(
                     mapLibreMap.locationComponent.isLocationComponentEnabled = true
                     mapLibreMap.locationComponent.cameraMode = CameraMode.TRACKING
 
-                    // Crea el engine de la UI y se lo pasa al ViewModel para suscribirse.
+                    // Crea el engFFFFine de la UI y se lo pasa al ViewModel para suscribirse.
                     val engine = mapLibreMap.locationComponent.locationEngine
                         ?: org.maplibre.android.location.engine.LocationEngineDefault.getDefaultLocationEngine(ctx)
+
+                    //notificamos al ViewModel que tiene engine disponible
                     viewModel.startLocationUpdates(engine)
+                    viewModel.setMapReady() // marca map como listo
 
                     // Si ya hay una ubicación conocida en el componente, centrar cámara (arranque rápido)
                     val lastLoc = mapLibreMap.locationComponent.lastKnownLocation
@@ -214,10 +248,20 @@ fun MapLibreLocationView(
     )
 }
 
+
+/**
+ * Metodo que crea la barra superior del DataPanel en donde se situan el botón de play/pause y el de seleccionar deporte
+ *
+ * @param Boolean: routeStarted
+ * @param Boolean: isRunning
+ * @param Boolean: enable
+ * @param Unit: onPlayPauseClick
+ *
+ */
 @Composable
 fun TopRecordingAppBar(
-    routeStarted: Boolean,
     isRunning: Boolean,
+    enabled: Boolean = true,
     onPlayPauseClick: () -> Unit
 ){
     Surface(
@@ -250,11 +294,11 @@ fun TopRecordingAppBar(
                 color = Color.LightGray,
             )
 
-            IconButton(onClick = onPlayPauseClick) {
+            IconButton(onClick = onPlayPauseClick, enabled = enabled) {
                 Icon(
-                    painter = if (isRunning) painterResource(R.drawable.play) else painterResource(R.drawable.pause),
+                    painter = if (!isRunning) painterResource(R.drawable.play) else painterResource(R.drawable.pause),
                     contentDescription = "RightIcon",
-                    tint = if (isRunning) Color.Green else Color.Red,
+                    tint = if (!isRunning) Color.Green else Color.Red,
                     modifier = Modifier.size(40.dp)
                 )
             }
@@ -262,10 +306,13 @@ fun TopRecordingAppBar(
     }
 }
 
+
+/**
+ * Panel de datos en tiempo real
+ * @param ViewModel
+ */
 @Composable
-fun DataPanel(
-    viewModel: PlayViewModel
-) {
+fun DataPanel(viewModel: PlayViewModel) {
     val elapsed by viewModel.elapsedTime.collectAsState()
     val tiempo = formatTime(elapsed)
 
@@ -316,6 +363,10 @@ fun DataPanel(
     }
 }
 
+
+/**
+ * Bloque individual que componen el DataPanel
+ */
 @Composable
 fun StatBlock(label: String, value: String, fontSize: TextUnit = 24.sp) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -324,12 +375,73 @@ fun StatBlock(label: String, value: String, fontSize: TextUnit = 24.sp) {
     }
 }
 
-fun formatTime(ms: Long): String {
-    val totalSec = ms / 1000
-    val h = totalSec / 3600
-    val m = (totalSec % 3600) / 60
-    val s = totalSec % 60
-    return String.format("%02d:%02d:%02d", h, m, s)
+
+/**
+ * Este bloque muestra un mensaje de confirmacion una vez que se le da al botón de guardar la ruta
+ */
+@Composable
+fun SaveRouteDialog(
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    var routeName by remember { mutableStateOf("") }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = {
+                Text(
+                    text = stringResource(R.string.saveRoute),
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        text = stringResource(R.string.routeName),
+                        color = Color.White.copy(alpha = 0.8f)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = routeName,
+                        onValueChange = { routeName = it },
+                        label = { Text(stringResource(R.string.routeNamePlaceholder)) },
+                        singleLine = true,
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedLabelColor = Color.White,
+                            unfocusedLabelColor = Color.White.copy(alpha = 0.6f),
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            cursorColor = Color.White,
+                            focusedIndicatorColor = Color.White,
+                            unfocusedIndicatorColor = Color.White.copy(alpha = 0.6f)
+                        )
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        if (routeName.isNotBlank()) {
+                            onConfirm(routeName)
+                        }
+                    },
+                    enabled = routeName.isNotBlank()
+                ) {
+                    Text(stringResource(R.string.save), color = Color.White)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(R.string.cancel), color = Color.Red)
+                }
+            },
+            containerColor = Gray,
+            shape = MaterialTheme.shapes.medium
+        )
+    }
 }
-
-

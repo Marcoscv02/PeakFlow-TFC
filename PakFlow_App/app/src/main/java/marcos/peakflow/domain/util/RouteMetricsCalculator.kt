@@ -61,3 +61,17 @@ fun calculateAvgHeartRate(points: List<RoutePoint>): Double {
     val hrs = points.mapNotNull { it.heartRate }
     return if (hrs.isNotEmpty()) hrs.average() else 0.0
 }
+
+
+// Velocidad actual (m/s) usando los dos últimos puntos
+fun calculateCurrentSpeed(points: List<RoutePoint>): Double {
+    if (points.size < 2) return 0.0
+    val a = points[points.size - 2]
+    val b = points.last()
+
+    val dt = (b.timestamp - a.timestamp).inWholeSeconds
+    if (dt <= 0) return 0.0
+
+    val dist = haversine(a.latitude, a.longitude, b.latitude, b.longitude)
+    return dist / dt
+}

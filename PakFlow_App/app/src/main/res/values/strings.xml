@@ -58,6 +58,14 @@
     <!--Play-->
     <string name="playTitleScreen">Grabación</string>
     <string name="EnableLocationRequest">La aplicación necesita acceder a la ubicación para poder realizar sus funcionalidades basicas </string>
+    <string name="mustStartRoute">Se debe iniciar una ruta antes de poder guardarla</string>
+    <string name="saveRoute">Guardar Ruta</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="routeNamePlaceholder">Nombre de la ruta</string>
+    <string name="routeName">Ingresa un nombre para tu ruta</string>
+
+
 
     <!--Route-->
     <string name="routeTitleScreen">Seguir Ruta</string>

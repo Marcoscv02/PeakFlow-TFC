@@ -4,7 +4,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 
 data class RoutePoint(
-    @SerialName("route_id") val routeId: String,
+    @SerialName("route_id") val routeId: String?,
     val timestamp: Instant,
     val latitude: Double,
     val longitude: Double,
