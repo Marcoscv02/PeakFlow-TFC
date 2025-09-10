@@ -23,6 +23,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import marcos.peakflow.R
+import marcos.peakflow.domain.model.route.RoutePoint
+import marcos.peakflow.domain.util.calculateCurrentSpeed
+import marcos.peakflow.domain.util.calculateDistance
+import marcos.peakflow.domain.util.calculateElevationGain
 import marcos.peakflow.domain.util.formatTime
 import marcos.peakflow.ui.components.BottomNavBar
 import marcos.peakflow.ui.components.Screen
@@ -60,6 +64,12 @@ fun PlayScreen(
     val mapReady by viewModel.mapReady.collectAsState()
 
     var showSaveDialog by remember { mutableStateOf(false) }
+
+    //puntos de la ruta
+    val routePoints by viewModel.routePoints.collectAsState()
+
+    //Datos en tiempo real
+
 
     //Lanza el chequeo de permisos cuando la vista se infle por primera vez
     LaunchedEffect(Unit) {
@@ -131,7 +141,7 @@ fun PlayScreen(
 
                 })
             //panel de datos en tiempo real
-            DataPanel(viewModel)
+            DataPanel(viewModel, routePoints)
 
             SaveRouteDialog(
                 showDialog = showSaveDialog,
@@ -312,7 +322,10 @@ fun TopRecordingAppBar(
  * @param ViewModel
  */
 @Composable
-fun DataPanel(viewModel: PlayViewModel) {
+fun DataPanel(
+    viewModel: PlayViewModel,
+    routePoints:List<RoutePoint>
+) {
     val elapsed by viewModel.elapsedTime.collectAsState()
     val tiempo = formatTime(elapsed)
 
@@ -330,7 +343,7 @@ fun DataPanel(viewModel: PlayViewModel) {
     ) {
 
         // Distancia
-        StatBlock(label = "Distancia", value = "7.2 km", fontSize = 34.sp)
+        StatBlock(label = "Distancia", value = calculateDistance(routePoints).toString() , fontSize = 34.sp)
 
         // Separador horizontal
         Divider(
@@ -346,7 +359,7 @@ fun DataPanel(viewModel: PlayViewModel) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             StatBlock(label = "Tiempo", value = tiempo)
-            StatBlock(label = "Ritmo", value = "5:23 /km")
+            StatBlock(label = "Ritmo", value = calculateCurrentSpeed(routePoints).toString())
         }
 
         // Elevación y ppm
@@ -354,8 +367,8 @@ fun DataPanel(viewModel: PlayViewModel) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            StatBlock(label = "Desnivel +", value = "120 m")
-            StatBlock(label = "Frecuencia", value = "145 ppm")
+            StatBlock(label = "Desnivel +", value = calculateElevationGain(routePoints).toString())
+            StatBlock(label = "Frecuencia", value = "---")
         }
 
 

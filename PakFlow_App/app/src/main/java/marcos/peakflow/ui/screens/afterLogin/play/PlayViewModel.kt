@@ -91,6 +91,11 @@ class PlayViewModel(
 
     //Ruta activa
     private lateinit var route: Route
+    private var cache: RoutePointsCache = RoutePointsCache ()
+
+    // Puntos de la ruta (para dibujar polyline en el mapa)
+    private val _routePoints = MutableStateFlow<List<RoutePoint>>(emptyList())
+    val routePoints: StateFlow<List<RoutePoint>> = _routePoints
 
 
 
@@ -263,13 +268,14 @@ class PlayViewModel(
 
     //FUNCIONES CRONÓMETRO
     /**
-     * Inicializa cronómetro
+     * Inicializa cronómetro y aprovechando que realiza operaciones periodicas en intervalos
+     * de un segundo, se ha aprovechado para implementar en esta parte la llamada al caso
+     * de uso "addRoutePoint"
      */
     private fun startTimer() {
         _isRunning.value = true
         job = viewModelScope.launch {
             val start = System.currentTimeMillis() - _elapsedTime.value
-            val cache = RoutePointsCache()
             val points = cache.getAll()
 
             while (_isRunning.value) {

@@ -1,5 +1,6 @@
 package marcos.peakflow.domain.cache
 
+import android.util.Log
 import marcos.peakflow.domain.model.route.RoutePoint
 
 class RoutePointsCache {
@@ -7,6 +8,8 @@ class RoutePointsCache {
 
     fun add(point: RoutePoint) {
         points.add(point)
+        Log.d("RoutePointsCache","Punto grabado: Latitud: ${point.latitude}, Longitud: ${point.longitude}")
+
     }
 
     fun getAll(): List<RoutePoint> = points.toList()
