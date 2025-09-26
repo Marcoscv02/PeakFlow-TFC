@@ -4,7 +4,8 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 
 data class Route(
-    @SerialName("user_id") val userId: String,
+    val id: String? = null, // Es null antes de guardarse
+    @SerialName("user_id") val userId: String?,
     val name: String?,
     @SerialName("start_time") val startTime: Instant,
     @SerialName("end_time") val endTime: Instant?,

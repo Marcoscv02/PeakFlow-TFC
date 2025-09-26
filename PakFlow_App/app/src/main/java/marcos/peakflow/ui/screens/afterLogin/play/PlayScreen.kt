@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_EXPRESSION")
+@file:Suppress("UNUSED_EXPRESSION", "DEPRECATION")
 
 package marcos.peakflow.ui.screens.afterLogin.play
 
@@ -28,6 +28,7 @@ import marcos.peakflow.domain.util.calculateCurrentSpeed
 import marcos.peakflow.domain.util.calculateDistance
 import marcos.peakflow.domain.util.calculateElevationGain
 import marcos.peakflow.domain.util.formatTime
+import marcos.peakflow.domain.util.msToMinPerKm
 import marcos.peakflow.ui.components.BottomNavBar
 import marcos.peakflow.ui.components.Screen
 import marcos.peakflow.ui.components.StandardTopAppBar
@@ -36,6 +37,7 @@ import marcos.peakflow.ui.theme.Black
 import marcos.peakflow.ui.theme.Gray
 import org.maplibre.android.MapLibre
 import org.maplibre.android.WellKnownTileServer
+import org.maplibre.android.annotations.PolylineOptions
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
@@ -149,7 +151,8 @@ fun PlayScreen(
                 onConfirm = { routeName ->
                     viewModel.onFinishRoute(routeName)
                     showSaveDialog = false
-                }
+                },
+                onDiscard = {viewModel.onDiscardRoute()}
             )
 
         }
@@ -179,7 +182,6 @@ fun MapLibreLocationView(
     DisposableEffect(Unit) {
         onDispose {
             viewModel.stopLocationUpdates()
-            // opcional: podríamos viewModel.setMapNotReady() si implementas eso
         }
     }
 
@@ -250,6 +252,21 @@ fun MapLibreLocationView(
                     .zoom(17.0)
                     .build()
                 map.animateCamera(CameraUpdateFactory.newCameraPosition(camera), 500)
+            }
+            // Dibuja polyline con los puntos acumulados
+            val points = viewModel.routePoints.value.map {
+                LatLng(it.latitude, it.longitude)
+            }
+            if (points.isNotEmpty()) {
+                // elimina líneas anteriores si no quieres que se acumulen
+                map?.clear()
+
+                map?.addPolyline(
+                    PolylineOptions()
+                        .addAll(points)
+                        .color(Color.Blue.hashCode()) // necesitas int (android.graphics.Color)
+                        .width(5f)
+                )
             }
         },
         modifier = Modifier
@@ -343,8 +360,11 @@ fun DataPanel(
     ) {
 
         // Distancia
-        StatBlock(label = "Distancia", value = calculateDistance(routePoints).toString() , fontSize = 34.sp)
-
+        StatBlock(
+            label = "Distancia",
+            value = String.format("%.2f", calculateDistance(routePoints) / 1000),
+            fontSize = 34.sp
+        )
         // Separador horizontal
         Divider(
             modifier = Modifier
@@ -359,7 +379,7 @@ fun DataPanel(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             StatBlock(label = "Tiempo", value = tiempo)
-            StatBlock(label = "Ritmo", value = calculateCurrentSpeed(routePoints).toString())
+            StatBlock(label = "km/min", value = msToMinPerKm(calculateCurrentSpeed(routePoints)).toString())
         }
 
         // Elevación y ppm
@@ -396,7 +416,8 @@ fun StatBlock(label: String, value: String, fontSize: TextUnit = 24.sp) {
 fun SaveRouteDialog(
     showDialog: Boolean,
     onDismiss: () -> Unit,
-    onConfirm: (String) -> Unit
+    onConfirm: (String) -> Unit,
+    onDiscard: () -> Unit
 ) {
     var routeName by remember { mutableStateOf("") }
 
@@ -438,19 +459,19 @@ fun SaveRouteDialog(
             },
             confirmButton = {
                 TextButton(
-                    onClick = {
-                        if (routeName.isNotBlank()) {
-                            onConfirm(routeName)
-                        }
-                    },
+                    onClick = { if (routeName.isNotBlank()) onConfirm(routeName) },
                     enabled = routeName.isNotBlank()
-                ) {
-                    Text(stringResource(R.string.save), color = Color.White)
-                }
+                ) { Text(stringResource(R.string.save), color = Color.White) }
             },
             dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text(stringResource(R.string.cancel), color = Color.Red)
+                Row {
+                    TextButton(onClick = onDiscard) {
+                        Text("Descartar", color = Color.Yellow)
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TextButton(onClick = onDismiss) {
+                        Text(stringResource(R.string.cancel), color = Color.Red)
+                    }
                 }
             },
             containerColor = Gray,

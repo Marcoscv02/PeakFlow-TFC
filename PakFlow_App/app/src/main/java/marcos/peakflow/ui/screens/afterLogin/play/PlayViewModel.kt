@@ -203,10 +203,7 @@ class PlayViewModel(
                 val newRoute = withContext(Dispatchers.IO) { startRouteUseCase(currentUser?.id) }
 
                 route = newRoute // guarda ruta en caché
-
-                // Inicia cronómetro
                 startTimer()
-
                 _isRecording.value = true
                 Log.i("PlayViewModel", "Entrenamiento iniciado")
 
@@ -228,15 +225,19 @@ class PlayViewModel(
                 name = name
             )
 
-            result.onSuccess {
-                Log.i("PlayViewModel", "Ruta finalizada y guardada: $it")
-            }.onFailure {
-                Log.e("PlayViewModel", "Error al finalizar ruta", it)
+           if (result) {
+                Log.i("PlayViewModel", "Ruta finalizada y guardada")
+            }
+            else{
+                Log.e("PlayViewModel", "Error al finalizar ruta")
             }
         }
     }
 
+    fun onDiscardRoute(){
+        cache.clear()
 
+    }
 
     /**
      * Metodo que se llama cuando se pausa/reanuda un entrenamiento
@@ -276,7 +277,6 @@ class PlayViewModel(
         _isRunning.value = true
         job = viewModelScope.launch {
             val start = System.currentTimeMillis() - _elapsedTime.value
-            val points = cache.getAll()
 
             while (_isRunning.value) {
                 _elapsedTime.value = System.currentTimeMillis() - start
@@ -288,11 +288,14 @@ class PlayViewModel(
                         latitude = latLng.latitude,
                         longitude = latLng.longitude,
                         timestamp = Clock.System.now(),
-                        speed = calculateCurrentSpeed(points),
+                        speed = calculateCurrentSpeed(routePoints.value),
                         altitude = latLng.altitude,
                         heartRate = null //Implementacion futura
                     )
                     addRoutePointUseCase(point)
+                    val current = _routePoints.value.toMutableList()
+                    current.add(point)
+                    _routePoints.value = current
                 }
 
 

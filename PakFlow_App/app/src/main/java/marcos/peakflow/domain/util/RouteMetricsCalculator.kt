@@ -7,9 +7,10 @@ import kotlin.math.*
 // Distancia total usando Haversine
 fun calculateDistance(points: List<RoutePoint>): Double {
     if (points.size < 2) return 0.0
-    return points.zipWithNext { a, b ->
+    val total = points.zipWithNext { a, b ->
         haversine(a.latitude, a.longitude, b.latitude, b.longitude)
     }.sum()
+    return round(total * 100) / 100
 }
 
 private fun haversine(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
@@ -73,5 +74,6 @@ fun calculateCurrentSpeed(points: List<RoutePoint>): Double {
     if (dt <= 0) return 0.0
 
     val dist = haversine(a.latitude, a.longitude, b.latitude, b.longitude)
-    return dist / dt
+    val speed = dist / dt
+    return round(speed * 100) / 100
 }

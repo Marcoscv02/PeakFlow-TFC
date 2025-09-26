@@ -8,7 +8,9 @@ fun formatTime(ms: Long): String {
     return String.format("%02d:%02d:%02d", h, m, s)
 }
 
-// Conversión de velocidad de m/s a km/min
-fun msToKmPerMin(speedMs: Double): Double {
-    return speedMs * 0.06
+// Conversión de velocidad de m/s a min/km
+fun msToMinPerKm(speedMps: Double): Double {
+    if (speedMps <= 0) return 0.0
+    val pace = 1000.0 / (speedMps * 60.0)
+    return kotlin.math.round(pace * 100) / 100
 }

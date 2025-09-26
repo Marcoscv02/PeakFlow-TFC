@@ -21,12 +21,13 @@ class FinishRouteUseCase(
     suspend operator fun invoke(
         route: Route,
         name: String
-    ): Result<Route> {
+    ): Boolean {
         gpsService.stop()
 
         // Tomar puntos acumulados en la cache y mandar error si no hay
         val points = cache.getAll()
-        if (points.isEmpty()) return Result.failure(Exception("No hay puntos de ruta"))
+        if (points.isEmpty())
+            return false
         System.err.println("No points to save in cache memory")
 
 

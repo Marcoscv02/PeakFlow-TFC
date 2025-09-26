@@ -15,11 +15,12 @@ class AuthSupabaseRepositoryImpl(
 ): AuthRepository {
 
 
-
     /**
      * Metodo para registrar un nuevo usuario
      * @param User: usuario
      * @param String: password
+     *
+     * @return Boolean
      */
     override suspend fun registerUser(user: User, password:String): Boolean {
         return try{
@@ -28,13 +29,13 @@ class AuthSupabaseRepositoryImpl(
                 this.email = user.email!!
                 this.password = password
             }
-            Log.d("UserRegister", "El usuario ha sido registrado")
+            Log.d("AuthRepository", "El usuario ha sido registrado")
 
             // 2. Verificar si el registro fue exitoso
-            val userId = authResponse?.id ?: throw Exception("User registration failed in repository")
+            val userId = authResponse?.id?: throw Exception("User registration failed in repository")
 
             //3. Insertar el resto de datos en la tabla para DB
-            supabase.from("user").insert(
+            supabase.from("users").insert(
                 mapOf(
                     "id" to userId,
                     "name" to user.username,
@@ -42,7 +43,7 @@ class AuthSupabaseRepositoryImpl(
                     "gender" to user.gender
                 )
             )
-            Log.d("UserDataSave", "Los datos del usuario han sido guardados en la base de datos")
+            Log.d("AuthRepository", "Los datos del usuario han sido guardados en la base de datos")
             true //Retorna true si el usuario ha sido logeado correctamente
         }catch(e: Exception){
             Log.e("AuthRepository", "Error en el registro: ${e.message}")
@@ -50,10 +51,13 @@ class AuthSupabaseRepositoryImpl(
         }
     }
 
+
     /**
      * Metodo para loguearse como usuario ya existente
      * @param email: String
      * @param String: password
+     *
+     * @return Boolean
      */
     override suspend fun loginUser(email: String, password: String): Boolean {
         return try {
@@ -61,7 +65,7 @@ class AuthSupabaseRepositoryImpl(
                 this.email = email
                 this.password = password
             }
-            Log.d("logedUser", "El usuario ha sido logueado")
+            Log.d("AuthRepository", "El usuario ha sido logueado")
             true
         }catch (e: Exception){
             Log.e("AuthRepository", "Error en login: ${e.message}")
@@ -69,6 +73,11 @@ class AuthSupabaseRepositoryImpl(
         }
     }
 
+
+    /**
+     * Metodo con el que se obtiene el usuario logueado actualmente a través del token de sesión
+     * @return User
+     */
     override suspend fun getCurrentUser(): User? {
         return try {
             val sessionUser = supabase.auth.currentUserOrNull()
@@ -77,7 +86,6 @@ class AuthSupabaseRepositoryImpl(
                     id = it.id,
                     email = it.email,
                     username = it.userMetadata?.get("name") as? String,
-                    // Si guardaste más datos en metadata:
                     birthdate = it.userMetadata?.get("birthdate") as? LocalDate?,
                     gender = it.userMetadata?.get("gender") as? String
                 )
@@ -88,10 +96,10 @@ class AuthSupabaseRepositoryImpl(
     }
 
 
-
     /**
      * Metodo para Cambiar la contraseña de una cuenta
      * @param email: String
+     * @return Boolean
      */
     override suspend fun resetPassword(email: String): Boolean {
         return try {
@@ -104,8 +112,10 @@ class AuthSupabaseRepositoryImpl(
         }
     }
 
+
     /**
      * Metodo para cerrar sesion
+     * @return Boolean
      */
     override suspend fun closeSession():Boolean {
         return try {
@@ -118,16 +128,29 @@ class AuthSupabaseRepositoryImpl(
         }
     }
 
+
+    /**
+     * Metodo que devuelve una lista de todos los usuarios registrados en la base de datos
+     * @return List
+     */
     override suspend fun getAllUsers(): List<User> {
         TODO("Not yet implemented")
     }
 
+
+    /**
+     * Metodo para borrar un usuario de la base de datos
+     * @param User user
+     * @return Boolean
+     */
     override suspend fun deleteUser(user: User): Boolean {
         TODO("Not yet implemented")
     }
 
+
     /**
      * Metodo para logearse a través de google
+     * @return Boolean
      */
     override suspend fun signInWithGoogle(): Boolean {
         return try {
