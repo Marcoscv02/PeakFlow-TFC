@@ -184,7 +184,7 @@ class RouteSupabaseRepositoryImpl(
 
             // 2. Obtener los puntos para esa ruta
             // getPoints ya debería devolver Result<List<RoutePoint>>
-            val pointsResult = getPoints(routeId) // Llama a tu método getPoints existente
+            val pointsResult = getPoints(routeId) // Llama al metodo getPoints
 
             // 3. Combinar la ruta con sus puntos
             val routeWithPoints = if (pointsResult.isSuccess) {

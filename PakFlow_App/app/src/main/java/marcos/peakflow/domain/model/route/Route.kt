@@ -2,7 +2,9 @@ package marcos.peakflow.domain.model.route
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Route(
     val id: String? = null, // Es null antes de guardarse
     @SerialName("user_id") val userId: String?,

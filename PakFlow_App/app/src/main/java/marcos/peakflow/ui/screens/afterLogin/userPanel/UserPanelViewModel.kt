@@ -1,5 +1,6 @@
 package marcos.peakflow.ui.screens.afterLogin.userPanel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,9 +17,14 @@ class UserPanelViewModel(
 
     init {
         viewModelScope.launch {
-            // Supabase mantiene el usuario actual en auth
-            val currentUser = authRepository.getCurrentUser()
-            _userName.value = currentUser?.username ?: "Sin Nombre"
+            // Se obtiene el usuario actual que devuelve un objeto Result<User>
+            authRepository.getCurrentUser().onSuccess { user ->
+                _userName.value = user.username ?: "Sin Nombre"
+                Log.d("UserPanelViewModel", "Nombre de usuario: ${user.username}")
+            }.onFailure { exception ->
+                _userName.value = "Sin Nombre"
+                Log.e("UserPanelViewModel", "Error al obtener el usuario", exception)
+            }
         }
     }
 

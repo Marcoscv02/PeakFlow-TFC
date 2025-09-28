@@ -1,6 +1,7 @@
 package marcos.peakflow.data.supabasereposimpl
 
 import android.util.Log
+import androidx.compose.animation.core.copy
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.Google
@@ -29,10 +30,15 @@ class AuthSupabaseRepositoryImpl(
                 this.email = user.email!!
                 this.password = password
             }
-            Log.d("AuthRepository", "El usuario ha sido registrado")
+            Log.d("AuthRepository", "signUpWith completado para ${user.email}")
 
-            // 2. Verificar si el registro fue exitoso
-            val userId = authResponse?.id?: throw Exception("User registration failed in repository")
+            // 2. Obtener el usuario recién registrado de la sesión actual.
+            // Después de un signUp exitoso (con confirmación desactivada), el usuario debería estar en la sesión.
+            val sessionUser = supabase.auth.currentUserOrNull()
+                ?: throw Exception("No se pudo obtener la sesión del usuario inmediatamente después del registro.")
+
+            val userId = sessionUser.id
+            Log.d("AuthRepository", "Usuario obtenido de la sesión con ID: $userId")
 
             //3. Insertar el resto de datos en la tabla para DB
             supabase.from("users").insert(
@@ -78,22 +84,39 @@ class AuthSupabaseRepositoryImpl(
      * Metodo con el que se obtiene el usuario logueado actualmente a través del token de sesión
      * @return User
      */
-    override suspend fun getCurrentUser(): User? {
+    override suspend fun getCurrentUser(): Result<User> {
+        val sessionUser = supabase.auth.currentUserOrNull()
+            ?: return Result.failure(Exception("No hay un usuario en la sesión actual."))
+
+        val userId = sessionUser.id
+        val userEmail = sessionUser.email
+
         return try {
-            val sessionUser = supabase.auth.currentUserOrNull()
-            sessionUser?.let {
-                User(
-                    id = it.id,
-                    email = it.email,
-                    username = it.userMetadata?.get("name") as? String,
-                    birthdate = it.userMetadata?.get("birthdate") as? LocalDate?,
-                    gender = it.userMetadata?.get("gender") as? String
-                )
+            // 1. Decodifica el usuario desde la DB. Gracias a @Transient, esto ya no fallará.
+            val userFromDB = supabase.from("users")
+                .select {
+                    filter { eq("id", userId) }
+                    limit(1)
+                }.decodeSingleOrNull<User>()
+
+            if (userFromDB == null) {
+                val errorMsg = "Usuario con ID: $userId no encontrado en la base de datos."
+                Log.w("AuthRepository", errorMsg)
+                return Result.failure(NoSuchElementException(errorMsg))
             }
+
+            // 2. Crea una nueva instancia con el email añadido y RETÓRNALA.
+            val finalUser = userFromDB.copy(email = userEmail)
+
+            Log.d("AuthRepository", "Usuario obtenido de DB y combinado con email: ${finalUser.id}")
+            Result.success(finalUser)
+
         } catch (e: Exception) {
-            null
+            Log.e("AuthRepository", "Error al obtener el usuario de la base de datos: ${e.message}", e)
+            Result.failure(e)
         }
     }
+
 
 
     /**

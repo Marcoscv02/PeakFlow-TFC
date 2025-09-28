@@ -32,6 +32,7 @@ import org.maplibre.android.location.engine.LocationEngineResult
 import org.maplibre.android.location.permissions.PermissionsListener
 import org.maplibre.android.location.permissions.PermissionsManager
 import kotlinx.datetime.Clock
+import marcos.peakflow.domain.model.user.User
 
 class PlayViewModel(
     private val startRouteUseCase: StartRouteUseCase,
@@ -197,19 +198,29 @@ class PlayViewModel(
      */
     fun onStartRoute() {
         viewModelScope.launch {
-            try {
-                // Obtiene usuario y ruta en IO
-                val currentUser = withContext(Dispatchers.IO) { authRepository.getCurrentUser() }
-                val newRoute = withContext(Dispatchers.IO) { startRouteUseCase(currentUser?.id) }
+            // Obtiene el resultado del usuario actual desde el repositorio
+            val currentUserResult: Result<User> = authRepository.getCurrentUser()
 
-                route = newRoute // guarda ruta en caché
-                startTimer()
-                _isRecording.value = true
-                Log.i("PlayViewModel", "Entrenamiento iniciado")
+            currentUserResult.onSuccess { user ->
+                Log.d("PlayViewModel", "Usuario obtenido con éxito: ${user.id}")
+                try {
+                    // (Una vez conseguido el usuario) Se llama al caso de uso para iniciar la ruta en el contexto de IO
+                    val newRoute = withContext(Dispatchers.IO) {
+                        startRouteUseCase(user.id.toString())
+                    }
 
-            } catch (e: Exception) {
+                    route = newRoute
+                    startTimer()
+                    _isRecording.value = true
+                    Log.i("PlayViewModel", "Entrenamiento iniciado para el usuario ${user.id}")
+
+                } catch (e: Exception) {
+                    _isRecording.value = false
+                    Log.e("PlayViewModel", "Error al iniciar la ruta en el caso de uso", e)
+                }
+            }.onFailure { exception ->
                 _isRecording.value = false
-                Log.e("PlayViewModel", "Error al iniciar ruta", e)
+                Log.e("PlayViewModel", "Error al obtener el usuario actual", exception)
             }
         }
     }
@@ -221,7 +232,7 @@ class PlayViewModel(
     fun onFinishRoute(name: String) {
         viewModelScope.launch {
             val result = finishRouteUseCase(
-                route = route,          // tu ruta activa
+                route = route,
                 name = name
             )
 
@@ -270,7 +281,7 @@ class PlayViewModel(
     //FUNCIONES CRONÓMETRO
     /**
      * Inicializa cronómetro y aprovechando que realiza operaciones periodicas en intervalos
-     * de un segundo, se ha aprovechado para implementar en esta parte la llamada al caso
+     * de un segundo, se ha implementado en esta parte la llamada al caso
      * de uso "addRoutePoint"
      */
     private fun startTimer() {
