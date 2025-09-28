@@ -7,6 +7,6 @@ class GetUserRoutesUseCase(
     private val routeRepository: RouteRepository
 ) {
     suspend operator fun invoke(userId: String): Result<List<Route>> {
-        return routeRepository.getRoutesByuser(userId)
+        return routeRepository.getUserRoutes()
     }
 }

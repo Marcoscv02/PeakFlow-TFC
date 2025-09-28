@@ -56,6 +56,6 @@ class FinishRouteUseCase(
            elevationLoss = elevationLoss,
            avgHeartRate = avgHeartRate
         )
-        return routeRepository.saveRoute(updatedRoute)
+        return routeRepository.saveRoute(updatedRoute).isSuccess
     }
 }
