@@ -25,6 +25,7 @@ ktorClientAndroid = "3.1.2"
 uiText = "1.8.3"
 runtimeLivedata = "1.8.3"
 coreI18n = "1.0.0"
+roomCompiler = "2.8.1"
 
 
 
@@ -81,6 +82,7 @@ ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorCli
 #MapLibre
 android-sdk = { module = "org.maplibre.gl:android-sdk", version.ref = "androidSdk" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 
 
 
