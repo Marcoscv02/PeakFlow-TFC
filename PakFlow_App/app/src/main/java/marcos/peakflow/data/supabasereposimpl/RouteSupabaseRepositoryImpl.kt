@@ -1,7 +1,6 @@
 package marcos.peakflow.data.supabasereposimpl
 
 import android.util.Log
-import androidx.compose.foundation.text.input.insert
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.exceptions.RestException
@@ -30,44 +29,49 @@ class RouteSupabaseRepositoryImpl(
         val currentUserId = supabase.auth.currentUserOrNull()?.id
             ?: return Result.failure(Exception("Usuario no autenticado."))
 
+        val routeToInsert = route.copy(userId = currentUserId)
+
         return try {
-            val routeData = mapOf(
-                "user_id" to currentUserId,
-                "name" to route.name,
-                "start_time" to route.startTime.toString(),
-                "end_time" to route.endTime?.toString(),
-                "distance_meters" to route.distance,
-                "duration_seconds" to route.durationSec,
-                "avg_speed_m_s" to route.avgSpeed,
-                "max_speed_m_s" to route.maxSpeed,
-                "elevation_gain_m" to route.elevationGain,
-                "elevation_loss_m" to route.elevationLoss,
-                "avg_heart_rate_bpm" to route.avgHeartRate
-            )
+            Log.d("RouteSupabaseRepo", "Guardando ruta: $routeToInsert")
 
-            Log.d("RouteSupabaseRepo", "Guardando ruta: $routeData")
+            // 2. CORRECCIÓN SINTAXIS: Se llama a la función correcta de la librería
+            val savedRoute = supabase.from("run_route").insert(
+                value = routeToInsert,
+//                returning = Returning.Representation()
+            ).decodeSingleOrNull<Route>() // <-- 3. CORRECCIÓN: Nombre de función corregido
 
-            supabase.from("run_route").insert(
-                value = routeData
-            )
+            val savedRouteId = savedRoute?.id
 
-            Log.i("RouteSupabaseRepo", "Ruta guardada exitosamente.")
-            Result.success(true)
+            // 4. CORRECCIÓN LÓGICA: Se reordena todo para ser seguro
+            if (savedRouteId != null) {
+                Log.i("RouteSupabaseRepo", "Ruta guardada exitosamente con ID: $savedRouteId.")
+
+                // Mueve la lógica de añadir puntos DENTRO del bloque de éxito.
+                // Usa 'isNullOrEmpty()' que es más seguro y idiomático en Kotlin.
+                if (!route.points.isNullOrEmpty()) {
+                    // Llama a addPoints solo si hay puntos y ya tienes el ID.
+                    // Ya no se necesita el peligroso '!!'.
+                    addPoints(savedRouteId as String, route.points)
+                } else {
+                    Log.w("RouteSupabaseRepo", "No hay puntos en la caché para añadir a la ruta $savedRouteId")
+                }
+
+                // Devuelve éxito solo después de que todo haya funcionado.
+                Result.success(true)
+
+            } else {
+                // Este bloque se ejecuta si la inserción fue bien pero la decodificación falló.
+                val errorMsg = "La ruta se guardó, pero no se pudo obtener el ID de vuelta."
+                Log.e("RouteSupabaseRepo", errorMsg)
+                Result.failure(Exception(errorMsg))
+            }
 
         } catch (e: RestException) {
-            Log.e(
-                "RouteSupabaseRepo",
-                "Error RestException al guardar ruta: ${e.message} | Código: ${e.statusCode}"
-            )
+            Log.e("RouteSupabaseRepo", "Error RestException al guardar ruta: ${e.message} | Código: ${e.statusCode}", e)
             Result.failure(e)
-
         } catch (e: Exception) {
-            Log.e(
-                "RouteSupabaseRepo",
-                "Error genérico al guardar ruta: ${e.message}"
-            )
+            Log.e("RouteSupabaseRepo", "Error genérico al guardar ruta: ${e.message}", e)
             Result.failure(e)
-
         }
     }
 

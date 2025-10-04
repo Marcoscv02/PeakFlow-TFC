@@ -19,5 +19,5 @@ data class Route(
     @SerialName("elevation_gain_m") val elevationGain: Double?,
     @SerialName("elevation_loss_m") val elevationLoss: Double?,
     @SerialName("avg_heart_rate_bpm") val avgHeartRate: Double?,
-    val points: List<RoutePoint>?
+    @Transient val points: List<RoutePoint>? = null
 )

@@ -26,12 +26,6 @@ android {
             properties.load(localPropertiesFile.inputStream())
         }
         buildConfigField("String", "Supabase_key", "\"" + properties.getProperty("Supabase_key") + "\"")
-
-        buildFeatures {
-            compose = true
-            // --- AÑADE ESTA LÍNEA AQUÍ ---
-            buildConfig = true
-        }
     }
 
     buildTypes {
@@ -52,6 +46,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
