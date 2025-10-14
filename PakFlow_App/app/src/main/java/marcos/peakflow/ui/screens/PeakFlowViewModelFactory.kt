@@ -5,10 +5,12 @@ import androidx.lifecycle.ViewModelProvider
 import marcos.peakflow.data.RepositoryContainer
 import marcos.peakflow.domain.usecase.route.AddRoutePointUseCase
 import marcos.peakflow.domain.usecase.route.FinishRouteUseCase
+import marcos.peakflow.domain.usecase.route.GetUserRoutesUseCase
 import marcos.peakflow.domain.usecase.route.PauseRouteUseCase
 import marcos.peakflow.domain.usecase.route.ResumeRouteUseCase
 import marcos.peakflow.domain.usecase.route.StartRouteUseCase
 import marcos.peakflow.ui.screens.afterLogin.play.PlayViewModel
+import marcos.peakflow.ui.screens.afterLogin.trainings.TrainingsViewModel
 import marcos.peakflow.ui.screens.afterLogin.userPanel.UserPanelViewModel
 import marcos.peakflow.ui.screens.beforeLogin.logueo.loginWithEmail.LoginWithEmailViewModel
 import marcos.peakflow.ui.screens.beforeLogin.registro.registerWithEmail.SignUpWithEmailViewModel
@@ -50,6 +52,13 @@ class PeakFlowViewModelFactory : ViewModelProvider.Factory {
                     finishRouteUseCase = finishRouteUseCase,
                     addRoutePointUseCase = addRoutePointUseCase,
                     authRepository = RepositoryContainer.authRepository
+                ) as T
+            }
+
+            modelClass.isAssignableFrom(TrainingsViewModel::class.java)->{
+                val routeRepository = RepositoryContainer.routeRepository
+                TrainingsViewModel(
+                    getUserRoutesUseCase = GetUserRoutesUseCase(routeRepository)
                 ) as T
             }
 
