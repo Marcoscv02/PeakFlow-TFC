@@ -37,7 +37,7 @@ class RouteSupabaseRepositoryImpl(
 
             //Insertar ruta en la DB
             val savedRoute = supabase.from("run_route").insert(
-                value = routeToInsert,
+                value = routeToInsert
             ).decodeSingleOrNull<Route>()
 
             val savedRouteId = savedRoute?.id //Obtener el id de la ruta insertada

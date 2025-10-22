@@ -24,6 +24,9 @@ object  Home
 object UserPanel
 
 @Serializable
+object Settings
+
+@Serializable
 object Play
 
 @Serializable
@@ -31,3 +34,6 @@ object Route
 
 @Serializable
 object Training
+
+@Serializable
+object TrainingDetail

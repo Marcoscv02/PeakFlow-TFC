@@ -54,6 +54,11 @@
     <string name="userName">Nombre usuario</string>
     <string name="closeSession">Cerrar Sesión</string>
 
+    <!--SettingsScreen-->
+    <string name="settingsTittle">Preferencias</string>
+    <string name="appearance">apariencia</string>
+
+
 
     <!--Play-->
     <string name="playTitleScreen">Grabación</string>
@@ -64,7 +69,6 @@
     <string name="cancel">Cancelar</string>
     <string name="routeNamePlaceholder">Nombre de la ruta</string>
     <string name="routeName">Ingresa un nombre para tu ruta</string>
-
 
 
     <!--Route-->

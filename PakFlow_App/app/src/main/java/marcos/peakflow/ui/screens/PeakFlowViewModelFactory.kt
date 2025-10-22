@@ -5,11 +5,14 @@ import androidx.lifecycle.ViewModelProvider
 import marcos.peakflow.data.RepositoryContainer
 import marcos.peakflow.domain.usecase.route.AddRoutePointUseCase
 import marcos.peakflow.domain.usecase.route.FinishRouteUseCase
+import marcos.peakflow.domain.usecase.route.GetRouteDetailsUseCase
 import marcos.peakflow.domain.usecase.route.GetUserRoutesUseCase
 import marcos.peakflow.domain.usecase.route.PauseRouteUseCase
 import marcos.peakflow.domain.usecase.route.ResumeRouteUseCase
 import marcos.peakflow.domain.usecase.route.StartRouteUseCase
+import marcos.peakflow.ui.screens.afterLogin.TrainingDetail.TrainingDetailViewModel
 import marcos.peakflow.ui.screens.afterLogin.play.PlayViewModel
+import marcos.peakflow.ui.screens.afterLogin.settings.SettingsViewModel
 import marcos.peakflow.ui.screens.afterLogin.trainings.TrainingsViewModel
 import marcos.peakflow.ui.screens.afterLogin.userPanel.UserPanelViewModel
 import marcos.peakflow.ui.screens.beforeLogin.logueo.loginWithEmail.LoginWithEmailViewModel
@@ -29,6 +32,10 @@ class PeakFlowViewModelFactory : ViewModelProvider.Factory {
 
             modelClass.isAssignableFrom(UserPanelViewModel::class.java) -> {
                 UserPanelViewModel(RepositoryContainer.authRepository) as T
+            }
+
+            modelClass.isAssignableFrom(SettingsViewModel::class.java) -> {
+                SettingsViewModel() as T
             }
 
             modelClass.isAssignableFrom(PlayViewModel::class.java) -> {
@@ -59,6 +66,13 @@ class PeakFlowViewModelFactory : ViewModelProvider.Factory {
                 val routeRepository = RepositoryContainer.routeRepository
                 TrainingsViewModel(
                     getUserRoutesUseCase = GetUserRoutesUseCase(routeRepository)
+                ) as T
+            }
+
+            modelClass.isAssignableFrom(TrainingDetailViewModel::class.java)->{
+                val routeRepository = RepositoryContainer.routeRepository
+                TrainingDetailViewModel(
+                    getRouteDetailsUseCase = GetRouteDetailsUseCase(routeRepository)
                 ) as T
             }
 

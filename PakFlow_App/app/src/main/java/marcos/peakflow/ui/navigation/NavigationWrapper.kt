@@ -12,9 +12,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import marcos.peakflow.ui.screens.afterLogin.TrainingDetail.TrainingDetailScreen
 import marcos.peakflow.ui.screens.afterLogin.home.HomeScreen
 import marcos.peakflow.ui.screens.afterLogin.play.PlayScreen
 import marcos.peakflow.ui.screens.afterLogin.route.RouteScreen
+import marcos.peakflow.ui.screens.afterLogin.settings.SettingsScreen
 import marcos.peakflow.ui.screens.afterLogin.trainings.TrainingsScreen
 import marcos.peakflow.ui.screens.afterLogin.userPanel.UserPanelScreen
 import marcos.peakflow.ui.screens.beforeLogin.SessionViewModel
@@ -105,7 +107,18 @@ fun NavigationWrapper() {
                     navigateToRoute = { navController.navigate(Route) },
                     navigateToTraining = { navController.navigate(Training) },
                     navigateBack = { navController.popBackStack() },
-                    navigateToInitial = {navController.navigate(Initial)}
+                    navigateToInitial = { navController.navigate(Initial) },
+                    navigateToSettings = { navController.navigate(Settings) }
+                )
+            }
+
+            composable<Settings> {
+                SettingsScreen(
+                    navigateToHome = { navController.navigate(Home) },
+                    navigateToPlay = { navController.navigate(Play) },
+                    navigateToRoute = { navController.navigate(Route) },
+                    navigateToTraining = { navController.navigate(Training) },
+                    navigateBack = { navController.popBackStack() },
                 )
             }
 
@@ -132,7 +145,18 @@ fun NavigationWrapper() {
                     navigateToHome = { navController.navigate(Home) },
                     navigateToPlay = { navController.navigate(Play) },
                     navigateToRoute = { navController.navigate(Route) },
-                    navigateBack = { navController.popBackStack() }
+                    navigateBack = { navController.popBackStack() },
+                    navigateTrainingDetail = {navController.navigate(TrainingDetail)}
+                )
+            }
+
+            composable<TrainingDetail>{
+                TrainingDetailScreen(
+                    navigateToHome = { navController.navigate(Home) },
+                    navigateToPlay = { navController.navigate(Play) },
+                    navigateToRoute = { navController.navigate(Route) },
+                    navigateToTraining = { navController.navigate(Training) },
+                    navigateBack = { navController.popBackStack() },
                 )
             }
         }

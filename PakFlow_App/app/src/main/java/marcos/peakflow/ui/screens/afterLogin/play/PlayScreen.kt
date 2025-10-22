@@ -114,7 +114,6 @@ fun PlayScreen(
         Column (
             modifier = Modifier
                 .fillMaxSize()
-                .background(Black)
         ){
             if (hasPermission) {
                 MapLibreLocationView(viewModel)

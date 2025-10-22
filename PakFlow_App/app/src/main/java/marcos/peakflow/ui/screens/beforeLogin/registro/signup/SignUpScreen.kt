@@ -35,8 +35,7 @@ fun SignUpScreen (
 ){
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         Spacer(modifier = Modifier.weight(1f))

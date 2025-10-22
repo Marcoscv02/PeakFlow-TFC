@@ -2,6 +2,7 @@ package marcos.peakflow.ui.screens.afterLogin.trainings
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -22,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.datetime.TimeZone.Companion.currentSystemDefault
 import marcos.peakflow.R
 import marcos.peakflow.domain.model.route.Route
 import marcos.peakflow.domain.util.formatInstant
@@ -41,7 +41,6 @@ import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.geometry.LatLngBounds
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
-import kotlin.text.lowercase
 import kotlin.time.*
 
 
@@ -51,7 +50,8 @@ fun TrainingsScreen(
     navigateToHome: () -> Unit,
     navigateToPlay: () -> Unit,
     navigateToRoute: () -> Unit,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    navigateTrainingDetail: () -> Unit
 ){
     val viewModel: TrainingsViewModel = viewModel(factory = PeakFlowViewModelFactory())
     val uiState : TrainingsUIState by viewModel.uiState.collectAsState()
@@ -84,8 +84,11 @@ fun TrainingsScreen(
         ) {
             when {
                 uiState.isLoading -> {
+
                     CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(50.dp)
                     )
                 }
                 uiState.error != null -> {
@@ -101,7 +104,10 @@ fun TrainingsScreen(
                         contentPadding = PaddingValues(vertical = 8.dp)
                     ) {
                         items(uiState.routes) { route ->
-                            TrainingItem(route = route)
+                            TrainingItem(
+                                route = route,
+                                navigateTrainingDetail
+                            )
                         }
                     }
                 }
@@ -114,11 +120,16 @@ fun TrainingsScreen(
 //Entrenamiento individual
 @OptIn(ExperimentalTime::class)
 @Composable
-fun TrainingItem(route: Route) {
+fun TrainingItem(
+    route: Route,
+    onItemClick: () -> Unit
+) {
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable{onItemClick()},
         colors = CardDefaults.cardColors(containerColor = Gray)
     ) {
         Column {
@@ -178,7 +189,7 @@ fun MetricItem(label: String, value: String) {
     }
 }
 
-//Mapa estatico del recorrido del entrenamiento
+//Mapa estático del recorrido del entrenamiento
 @Composable
 fun StaticRouteMap(route: Route) {
     val context = LocalContext.current

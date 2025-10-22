@@ -3,6 +3,7 @@ package marcos.peakflow.ui.screens.afterLogin.userPanel
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,7 +35,8 @@ fun UserPanelScreen(
     navigateToRoute: () -> Unit,
     navigateToTraining: () -> Unit,
     navigateBack: () -> Unit,
-    navigateToInitial: () -> Unit
+    navigateToInitial: () -> Unit,
+    navigateToSettings: () -> Unit
 ) {
     val viewModel : UserPanelViewModel = viewModel(factory = PeakFlowViewModelFactory())
     val userName by viewModel.userName.collectAsState()
@@ -46,9 +48,9 @@ fun UserPanelScreen(
                 title = userName,
                 onLeftClick = navigateBack,
                 leftIcon = R.drawable.back,
-                onMidleClick = {},
+                onMidleClick = { },
                 middleIcon = R.drawable.search,
-                onRightClick = {},
+                onRightClick = navigateToSettings,
                 rightIcon = R.drawable.settings
             )
         },
@@ -66,8 +68,8 @@ fun UserPanelScreen(
             modifier = Modifier
                 .fillMaxSize()  // Añade esto para ocupar todo el espacio
                 .padding(innerPadding)  // Respeta el padding de las barras
-                .background(Black)
         ) {
+            Spacer(Modifier.weight(1f))
             // Botón de CERRAR SESIÓN (corregido)
             Button(
                 onClick = { viewModel.closeSession(navigateToInitial) },
