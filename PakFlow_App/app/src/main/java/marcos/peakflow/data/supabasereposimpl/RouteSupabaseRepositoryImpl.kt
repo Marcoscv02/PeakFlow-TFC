@@ -35,12 +35,14 @@ class RouteSupabaseRepositoryImpl(
             Log.d("RouteSupabaseRepo", "Guardando ruta: $routeCopy")
 
             //Insertar ruta en la DB
-            val savedRoute = supabase.from("run_route").insert(routeCopy) //.decodeSingleOrNull<Route>()
+            val savedRoute = supabase.from("run_route").insert(routeCopy) {
+                select()
+            }.decodeSingleOrNull<Route>()
 
-            Log.d("RouteSupabaseRepo", "Ruta insertada: ${savedRoute.data}")
+            Log.d("RouteSupabaseRepo", "Ruta insertada: ${savedRoute?.id}")
 
 
-            val savedRouteId =  "30b56d9f-36be-4c36-81a2-56f9dfc5cb52"// savedRoute?.id //Obtener el id de la ruta insertada
+            val savedRouteId =  savedRoute?.id //Obtener el id de la ruta insertada
 
             Log.d("RouteSupabaseRepo", "Ruta insertada con ID: $savedRouteId")
 
