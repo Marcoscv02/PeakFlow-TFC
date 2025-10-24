@@ -12,7 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import marcos.peakflow.ui.navigation.NavigationWrapper
 import marcos.peakflow.ui.screens.afterLogin.play.PlayViewModel
-import marcos.peakflow.ui.theme.PeakFlowTheme
+import marcos.peakflow.ui.theme.ThemeChangerTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
             val application = application as PeakFlowApp
             navHostController = rememberNavController()
 
-            PeakFlowTheme {
+            ThemeChangerTheme(darkTheme = true) { 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

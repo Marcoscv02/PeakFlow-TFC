@@ -29,16 +29,26 @@ class RouteSupabaseRepositoryImpl(
         val currentUserId = supabase.auth.currentUserOrNull()?.id
             ?: return Result.failure(Exception("Usuario no autenticado."))
 
-        //Insertar id del mismo en la ruta
-        val routeToInsert = route.copy(userId = currentUserId)
+        val routeData = mapOf(
+            "user_id" to currentUserId,
+            "name" to route.name,
+            "start_time" to route.startTime,
+            "end_time" to route.endTime,
+            "distance_meters" to route.distance,
+            "duration_seconds" to route.durationSec,
+            "moving_seconds" to route.movingSec,
+            "avg_speed_m_s" to route.avgSpeed,
+            "max_speed_m_s" to route.maxSpeed,
+            "elevation_gain_m" to route.elevationGain,
+            "elevation_loss_m" to route.elevationLoss,
+            "avg_heart_rate_bpm" to route.avgHeartRate
+        )
 
         return try {
-            Log.d("RouteSupabaseRepo", "Guardando ruta: $routeToInsert")
+            Log.d("RouteSupabaseRepo", "Guardando ruta: $route")
 
             //Insertar ruta en la DB
-            val savedRoute = supabase.from("run_route").insert(
-                value = routeToInsert
-            ).decodeSingleOrNull<Route>()
+            val savedRoute = supabase.from("run_route").insert(routeData).decodeSingleOrNull<Route>()
 
             val savedRouteId = savedRoute?.id //Obtener el id de la ruta insertada
 
@@ -259,7 +269,7 @@ class RouteSupabaseRepositoryImpl(
             val points = supabase.from("run_route_point") // Nombre correcto de la tabla de puntos
                 .select {
                     filter { eq("route_id", routeId) }
-                    order("created_at", io.github.jan.supabase.postgrest.query.Order.ASCENDING) // Asumiendo que 'created_at' es el timestamp del punto
+                    order("created_at", Order.ASCENDING) // Asumiendo que 'created_at' es el timestamp del punto
                 }
                 .decodeList<RoutePoint>() // Deserialización directa
             Log.d("RouteSupabaseRepo", "Obtenidos ${points.size} puntos para la ruta $routeId")

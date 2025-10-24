@@ -26,9 +26,12 @@ class FinishRouteUseCase(
 
         // Tomar puntos acumulados en la cache y mandar error si no hay
         val points = cache.getAll()
-        if (points.isEmpty())
+        if (points.isEmpty()){
+            System.err.println("No points to save in cache memory")
             return false
-        System.err.println("No points to save in cache memory")
+        }
+
+
 
 
 
@@ -54,7 +57,8 @@ class FinishRouteUseCase(
            maxSpeed = maxSpeed,
            elevationGain = elevationGain,
            elevationLoss = elevationLoss,
-           avgHeartRate = avgHeartRate
+           avgHeartRate = 0.0,
+            points = points
         )
         return routeRepository.saveRoute(updatedRoute).isSuccess
     }

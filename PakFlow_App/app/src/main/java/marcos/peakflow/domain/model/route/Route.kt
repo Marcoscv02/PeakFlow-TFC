@@ -3,6 +3,7 @@ package marcos.peakflow.domain.model.route
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 data class Route(
@@ -18,6 +19,6 @@ data class Route(
     @SerialName("max_speed_m_s") val maxSpeed: Double?,
     @SerialName("elevation_gain_m") val elevationGain: Double?,
     @SerialName("elevation_loss_m") val elevationLoss: Double?,
-    @SerialName("avg_heart_rate_bpm") val avgHeartRate: Double?,
-    @Transient val points: List<RoutePoint>? = null
+    @SerialName("avg_heart_rate_bpm") val avgHeartRate: Double? =null,
+    @Transient val points: List<RoutePoint>? = emptyList<RoutePoint>()
 )

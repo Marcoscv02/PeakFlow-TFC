@@ -125,7 +125,7 @@ class AndroidGpsService(
                 longitude = loc.longitude,
                 altitude = loc.altitude,
                 speed = loc.speed.toDouble(),
-                heartRate = null // integrar si se obtiene de otro servicio
+                heartRate = 0 // integrar si se obtiene de otro servicio
             )
             _updates.tryEmit(point) // emisión no bloqueante
         }
