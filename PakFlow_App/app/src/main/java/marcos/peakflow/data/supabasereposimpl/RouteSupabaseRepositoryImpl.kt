@@ -29,28 +29,20 @@ class RouteSupabaseRepositoryImpl(
         val currentUserId = supabase.auth.currentUserOrNull()?.id
             ?: return Result.failure(Exception("Usuario no autenticado."))
 
-        val routeData = mapOf(
-            "user_id" to currentUserId,
-            "name" to route.name,
-            "start_time" to route.startTime,
-            "end_time" to route.endTime,
-            "distance_meters" to route.distance,
-            "duration_seconds" to route.durationSec,
-            "moving_seconds" to route.movingSec,
-            "avg_speed_m_s" to route.avgSpeed,
-            "max_speed_m_s" to route.maxSpeed,
-            "elevation_gain_m" to route.elevationGain,
-            "elevation_loss_m" to route.elevationLoss,
-            "avg_heart_rate_bpm" to route.avgHeartRate
-        )
+       val routeCopy = route.copy(userId = currentUserId)
 
         return try {
-            Log.d("RouteSupabaseRepo", "Guardando ruta: $route")
+            Log.d("RouteSupabaseRepo", "Guardando ruta: $routeCopy")
 
             //Insertar ruta en la DB
-            val savedRoute = supabase.from("run_route").insert(routeData).decodeSingleOrNull<Route>()
+            val savedRoute = supabase.from("run_route").insert(routeCopy) //.decodeSingleOrNull<Route>()
 
-            val savedRouteId = savedRoute?.id //Obtener el id de la ruta insertada
+            Log.d("RouteSupabaseRepo", "Ruta insertada: ${savedRoute.data}")
+
+
+            val savedRouteId =  "30b56d9f-36be-4c36-81a2-56f9dfc5cb52"// savedRoute?.id //Obtener el id de la ruta insertada
+
+            Log.d("RouteSupabaseRepo", "Ruta insertada con ID: $savedRouteId")
 
             if (savedRouteId != null) {
                 Log.i("RouteSupabaseRepo", "Ruta guardada exitosamente con ID: $savedRouteId.")
@@ -230,17 +222,11 @@ class RouteSupabaseRepositoryImpl(
         }
         return try {
             val pointsData = points.map { point ->
-                mapOf(
-                    "route_id" to routeId, // Ensure the passed routeId is used
-                    "timestamp" to point.timestamp.toString(),
-                    "latitude" to point.latitude,
-                    "longitude" to point.longitude,
-                    "altitude_m" to point.altitude,
-                    "speed_m_s" to point.speed,
-                    "heart_rate_bpm" to point.heartRate
-                )
+                    point.copy(routeId = routeId)
             }
-            supabase.from("route_points").insert(values = pointsData)
+
+
+            supabase.from("run_route_point").insert(values = pointsData)
             Log.i("RouteSupabaseRepo", "${points.size} points added for routeId: $routeId")
             Result.success(Unit)
         } catch (e: RestException) {
