@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,10 +52,11 @@ fun TrainingsScreen(
     navigateToPlay: () -> Unit,
     navigateToRoute: () -> Unit,
     navigateBack: () -> Unit,
-    navigateTrainingDetail: () -> Unit
+    navigateTrainingDetail: (String) -> Unit
 ){
     val viewModel: TrainingsViewModel = viewModel(factory = PeakFlowViewModelFactory())
     val uiState : TrainingsUIState by viewModel.uiState.collectAsState()
+
     Scaffold(
         topBar = {
             TripleTopAppBar(
@@ -106,7 +108,12 @@ fun TrainingsScreen(
                         items(uiState.routes) { route ->
                             TrainingItem(
                                 route = route,
-                                navigateTrainingDetail
+                                onItemClick = {navigateTrainingDetail (route.id.toString())},
+                                onDeleteClick ={
+                                    if (route.id != null) {
+                                        viewModel.deleteRoute(route.id)
+                                    }
+                                }
                             )
                         }
                     }
@@ -117,12 +124,18 @@ fun TrainingsScreen(
     }
 }
 
-//Entrenamiento individual
+/**
+ * Item de entrenamiento en la pantalla de entrenamiento
+ * @param Route
+ * @param Unit
+ * @param Unit
+ */
 @OptIn(ExperimentalTime::class)
 @Composable
 fun TrainingItem(
     route: Route,
-    onItemClick: () -> Unit
+    onItemClick: () -> Unit,
+    onDeleteClick: () -> Unit
 ) {
 
     Card(
@@ -158,6 +171,18 @@ fun TrainingItem(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    // 2. ENGADE A ICONA DA PAPELEIRA
+                    IconButton(onClick = onDeleteClick) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.delete),
+                            contentDescription = "Eliminar entrenamiento",
+                            tint = Color.White.copy(alpha = 0.7f),
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -180,7 +205,11 @@ fun TrainingItem(
 }
 
 
-//Métricas de entrenamiento
+/**
+ * Bloque individual que componen el DataPanel
+ * @param String: label
+ * @param String: value
+ */
 @Composable
 fun MetricItem(label: String, value: String) {
     Column(horizontalAlignment = Alignment.Start) {
@@ -189,7 +218,10 @@ fun MetricItem(label: String, value: String) {
     }
 }
 
-//Mapa estático del recorrido del entrenamiento
+/**
+ * Mapa estático con la ruta
+ * @param Route
+ */
 @Composable
 fun StaticRouteMap(route: Route) {
     val context = LocalContext.current

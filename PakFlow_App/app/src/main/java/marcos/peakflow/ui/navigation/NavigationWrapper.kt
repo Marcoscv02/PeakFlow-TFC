@@ -12,7 +12,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import marcos.peakflow.ui.screens.afterLogin.TrainingDetail.TrainingDetailScreen
+import androidx.navigation.toRoute
+import marcos.peakflow.ui.screens.afterLogin.trainingDetail.TrainingDetailScreen
 import marcos.peakflow.ui.screens.afterLogin.home.HomeScreen
 import marcos.peakflow.ui.screens.afterLogin.play.PlayScreen
 import marcos.peakflow.ui.screens.afterLogin.route.RouteScreen
@@ -146,17 +147,22 @@ fun NavigationWrapper() {
                     navigateToPlay = { navController.navigate(Play) },
                     navigateToRoute = { navController.navigate(Route) },
                     navigateBack = { navController.popBackStack() },
-                    navigateTrainingDetail = {navController.navigate(TrainingDetail)}
+                    navigateTrainingDetail = { routeId ->
+                        navController.navigate(TrainingDetail(routeId = routeId))
+                    }
                 )
             }
 
-            composable<TrainingDetail>{
+            composable<TrainingDetail>{ backStackEntry ->
+                val detailArgs = backStackEntry.toRoute<TrainingDetail>()
+                val routeId = detailArgs.routeId
                 TrainingDetailScreen(
                     navigateToHome = { navController.navigate(Home) },
                     navigateToPlay = { navController.navigate(Play) },
                     navigateToRoute = { navController.navigate(Route) },
                     navigateToTraining = { navController.navigate(Training) },
                     navigateBack = { navController.popBackStack() },
+                    routeId = routeId
                 )
             }
         }

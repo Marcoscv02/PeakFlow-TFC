@@ -38,26 +38,19 @@ class RouteSupabaseRepositoryImpl(
             val savedRoute = supabase.from("run_route").insert(routeCopy) {
                 select()
             }.decodeSingleOrNull<Route>()
-
-            Log.d("RouteSupabaseRepo", "Ruta insertada: ${savedRoute?.id}")
-
-
             val savedRouteId =  savedRoute?.id //Obtener el id de la ruta insertada
 
-            Log.d("RouteSupabaseRepo", "Ruta insertada con ID: $savedRouteId")
-
             if (savedRouteId != null) {
-                Log.i("RouteSupabaseRepo", "Ruta guardada exitosamente con ID: $savedRouteId.")
-
                 if (!route.points.isNullOrEmpty()) {
                     addPoints(savedRouteId , route.points)
                 } else {
                     Log.w("RouteSupabaseRepo", "No hay puntos en la caché para añadir a la ruta $savedRouteId")
                 }
 
-                Result.success(true) //Devolver resultado exitoso
+                Log.i("RouteSupabaseRepo", "Ruta guardada exitosamente con ID: $savedRouteId.")
+                Result.success(true)
 
-            } else { // Este bloque se ejecuta si la inserción fue bien pero la decodificación falló.
+            } else {
                 Result.failure(Exception("La ruta se guardó, pero no se pudo obtener el ID de vuelta."))
             }
 
@@ -217,20 +210,16 @@ class RouteSupabaseRepositoryImpl(
      * @param List<RoutePoint> points
      * @return Result<Unit>
      */
-    override suspend fun addPoints(routeId: String, points: List<RoutePoint>): Result<Unit> {
-        if (points.isEmpty()) {
-            Log.i("RouteSupabaseRepo", "No points to add for routeId: $routeId")
-            return Result.success(Unit)
-        }
+    override suspend fun addPoints(routeId: String, points: List<RoutePoint>): Result<Boolean> {
+
         return try {
             val pointsData = points.map { point ->
-                    point.copy(routeId = routeId)
+                point.copy(routeId = routeId)
             }
-
 
             supabase.from("run_route_point").insert(values = pointsData)
             Log.i("RouteSupabaseRepo", "${points.size} points added for routeId: $routeId")
-            Result.success(Unit)
+            Result.success(true)
         } catch (e: RestException) {
             Log.e(
                 "RouteSupabaseRepo",
@@ -313,6 +302,36 @@ class RouteSupabaseRepositoryImpl(
             Result.failure(e)
         } catch (e: Exception) {
             Log.e("RouteSupabaseRepo", "Exception en getLastRouteSaved: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Edita el nombre de la ruta pasada como parámetro.     * @param route La ruta a modificar.
+     * @param name El nuevo nombre para la ruta.
+     * @return Result<Boolean> `true` si la actualización fue exitosa, `false` en caso contrario.
+     */
+    override suspend fun editRoute(route: Route, name: String): Result<Boolean> {
+        val routeId = route.id ?: return Result.failure(
+            IllegalArgumentException("La ruta no tiene un ID para poder ser actualizada.")
+        )
+
+        return try {
+            supabase.from("run_route")
+                .update(
+                    { set("name", name) }
+                ) {
+                    filter { eq("id", routeId) } // Asegurarse de actualizar solo la ruta correcta
+                }
+
+            Log.i("RouteSupabaseRepo", "Ruta con ID $routeId actualizada con el nuevo nombre: '$name'")
+            Result.success(true)
+
+        } catch (e: RestException) {
+            Log.e("RouteSupabaseRepo", "Error RestException al editar la ruta $routeId: ${e.message}", e)
+            Result.failure(e)
+        } catch (e: Exception) {
+            Log.e("RouteSupabaseRepo", "Error genérico al editar la ruta $routeId: ${e.message}", e)
             Result.failure(e)
         }
     }

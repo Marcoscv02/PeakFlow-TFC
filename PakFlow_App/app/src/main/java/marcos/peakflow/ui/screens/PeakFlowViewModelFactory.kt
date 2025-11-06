@@ -4,19 +4,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import marcos.peakflow.data.RepositoryContainer
 import marcos.peakflow.domain.usecase.route.AddRoutePointUseCase
+import marcos.peakflow.domain.usecase.route.DeleteRouteUseCase
 import marcos.peakflow.domain.usecase.route.FinishRouteUseCase
 import marcos.peakflow.domain.usecase.route.GetRouteDetailsUseCase
 import marcos.peakflow.domain.usecase.route.GetUserRoutesUseCase
 import marcos.peakflow.domain.usecase.route.PauseRouteUseCase
 import marcos.peakflow.domain.usecase.route.ResumeRouteUseCase
 import marcos.peakflow.domain.usecase.route.StartRouteUseCase
-import marcos.peakflow.ui.screens.afterLogin.TrainingDetail.TrainingDetailViewModel
+import marcos.peakflow.ui.screens.afterLogin.trainingDetail.TrainingDetailViewModel
 import marcos.peakflow.ui.screens.afterLogin.play.PlayViewModel
 import marcos.peakflow.ui.screens.afterLogin.settings.SettingsViewModel
 import marcos.peakflow.ui.screens.afterLogin.trainings.TrainingsViewModel
 import marcos.peakflow.ui.screens.afterLogin.userPanel.UserPanelViewModel
 import marcos.peakflow.ui.screens.beforeLogin.logueo.loginWithEmail.LoginWithEmailViewModel
 import marcos.peakflow.ui.screens.beforeLogin.registro.registerWithEmail.SignUpWithEmailViewModel
+import marcos.peakflow.ui.theme.ThemeViewModel
 
 class PeakFlowViewModelFactory : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
@@ -65,14 +67,16 @@ class PeakFlowViewModelFactory : ViewModelProvider.Factory {
             modelClass.isAssignableFrom(TrainingsViewModel::class.java)->{
                 val routeRepository = RepositoryContainer.routeRepository
                 TrainingsViewModel(
-                    getUserRoutesUseCase = GetUserRoutesUseCase(routeRepository)
+                    getUserRoutesUseCase = GetUserRoutesUseCase(routeRepository),
+                    deleteRouteUseCase = DeleteRouteUseCase(routeRepository)
                 ) as T
             }
 
             modelClass.isAssignableFrom(TrainingDetailViewModel::class.java)->{
                 val routeRepository = RepositoryContainer.routeRepository
                 TrainingDetailViewModel(
-                    getRouteDetailsUseCase = GetRouteDetailsUseCase(routeRepository)
+                    getRouteDetailsUseCase = GetRouteDetailsUseCase(routeRepository),
+                    routeRepository = routeRepository
                 ) as T
             }
 

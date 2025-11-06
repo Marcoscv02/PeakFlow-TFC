@@ -2,7 +2,10 @@ package marcos.peakflow.domain.util
 
 import kotlinx.datetime.Instant
 import marcos.peakflow.domain.model.route.RoutePoint
+import java.util.concurrent.TimeUnit
 import kotlin.math.*
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 // Distancia total usando Haversine
 fun calculateDistance(points: List<RoutePoint>): Double {
@@ -76,4 +79,17 @@ fun calculateCurrentSpeed(points: List<RoutePoint>): Double {
     val dist = haversine(a.latitude, a.longitude, b.latitude, b.longitude)
     val speed = dist / dt
     return round(speed * 100) / 100
+}
+
+//Formatear segundos formato estandar
+fun formatSecondsToTime(seconds: Long): String {
+    val hours = TimeUnit.SECONDS.toHours(seconds)
+    val minutes = TimeUnit.SECONDS.toMinutes(seconds) % 60
+    val secs = seconds % 60
+
+    return if (hours > 0) {
+        String.format("%02d:%02d:%02d", hours, minutes, secs)
+    } else {
+        String.format("%02d:%02d", minutes, secs)
+    }
 }

@@ -58,8 +58,6 @@
     <string name="settingsTittle">Preferencias</string>
     <string name="appearance">apariencia</string>
 
-
-
     <!--Play-->
     <string name="playTitleScreen">Grabación</string>
     <string name="EnableLocationRequest">La aplicación necesita acceder a la ubicación para poder realizar sus funcionalidades basicas </string>
@@ -70,14 +68,27 @@
     <string name="routeNamePlaceholder">Nombre de la ruta</string>
     <string name="routeName">Ingresa un nombre para tu ruta</string>
 
-
     <!--Route-->
     <string name="routeTitleScreen">Seguir Ruta</string>
 
     <!--Trainings-->
     <string name="trainingsTitleScreen">Mis Entrenos</string>
+    <string name="runningIcon">Icono Running</string>
 
-
+    <!--Trainingdetail-->
+    <string name="trainingDetailTitleScreen">Detalles del entrenamiento</string>
+    <string name="distance">Distancia</string>
+    <string name="movTime">Temp. movimiento</string>
+    <string name="trainingName">Entrenamiento</string>
+    <string name="totalTime">Tiempo total</string>
+    <string name="desPos">Desnivel positivo</string>
+    <string name="desNeg">Desnivel negativo</string>
+    <string name="avgSpeed">Vel. media</string>
+    <string name="heartRate">Frec. Cardíaca</string>
+    <string name="editRoute">Editar nombre de la Ruta</string>
+    <string name="editRoutePlaceHolder">Nuevo nombre</string>
+    <string name="editRouteSuccess">Ruta modificada con éxito</string>
+    <string name="editRouteFailure">Error al modificar la ruta</string>
 
 
 </resources>

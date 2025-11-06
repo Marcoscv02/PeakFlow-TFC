@@ -8,7 +8,8 @@ interface RouteRepository {
     suspend fun deleteRoute(routeId: String): Result<Boolean>
     suspend fun getUserRoutes(): Result<List<Route>>
     suspend fun getRouteById(routeId: String): Result<Route>
-    suspend fun addPoints(routeId: String, points: List<RoutePoint>): Result<Unit>
+    suspend fun addPoints(routeId: String, points: List<RoutePoint>): Result<Boolean>
     suspend fun getPoints(routeId: String): Result<List<RoutePoint>>
     suspend fun getLastRouteSaved(): Result<Route>
+    suspend fun editRoute(route: Route, name: String): Result<Boolean>
 }

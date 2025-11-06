@@ -336,6 +336,7 @@ fun TopRecordingAppBar(
 /**
  * Panel de datos en tiempo real
  * @param ViewModel
+ * @param List<RoutePoint>
  */
 @Composable
 fun DataPanel(
@@ -398,6 +399,9 @@ fun DataPanel(
 
 /**
  * Bloque individual que componen el DataPanel
+ * @param String: label
+ * @param String: value
+ * @param TextUnit: fontSize
  */
 @Composable
 fun StatBlock(label: String, value: String, fontSize: TextUnit = 24.sp) {
@@ -410,6 +414,10 @@ fun StatBlock(label: String, value: String, fontSize: TextUnit = 24.sp) {
 
 /**
  * Este bloque muestra un mensaje de confirmacion una vez que se le da al botón de guardar la ruta
+ * @param Boolean: showDialog
+ * @param Unit: onDismiss
+ * @param Unit: onConfirm
+ * @param Unit: onDiscard
  */
 @Composable
 fun SaveRouteDialog(

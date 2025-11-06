@@ -36,4 +36,4 @@ object Route
 object Training
 
 @Serializable
-object TrainingDetail
+data class TrainingDetail (val routeId: String)

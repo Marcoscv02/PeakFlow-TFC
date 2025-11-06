@@ -26,3 +26,13 @@ fun formatInstant(instant: Instant): String {
     return "${dateTime.dayOfMonth} ${dateTime.month.name.lowercase()} ${dateTime.year} " +
             "${"%02d".format(dateTime.hour)}:${"%02d".format(dateTime.minute)}"
 }
+
+//Formate de la distancia recorrida para que si supera el km se muestre en km y no en metros
+fun formatDistance(meters: Double): String{
+    if (meters < 1000) {
+        return String.format("%.2f m", meters)
+    } else {
+        val km = meters / 1000
+        return String.format("%.2f km", km)
+    }
+}

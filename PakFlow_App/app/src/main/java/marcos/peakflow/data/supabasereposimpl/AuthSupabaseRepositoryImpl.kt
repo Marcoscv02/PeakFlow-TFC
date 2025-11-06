@@ -7,7 +7,6 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.postgrest.from
-import kotlinx.datetime.LocalDate
 import marcos.peakflow.domain.model.user.User
 import marcos.peakflow.domain.repository.AuthRepository
 
