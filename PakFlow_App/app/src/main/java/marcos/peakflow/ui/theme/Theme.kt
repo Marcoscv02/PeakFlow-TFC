@@ -67,7 +67,7 @@ private val LightColorScheme = lightColorScheme(
     error = RedError,
     onError = Color.White,
 
-    tertiary = BlueMetric
+    onTertiary = BlueMetric
 )
 
 @Composable

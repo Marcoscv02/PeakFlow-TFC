@@ -35,7 +35,7 @@ fun StandardTopAppBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp),
-        border = BorderStroke(1.dp, Gray)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary)
     ) {
         Row(
             modifier = Modifier

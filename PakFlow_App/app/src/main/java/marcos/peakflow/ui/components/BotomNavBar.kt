@@ -47,7 +47,7 @@ fun BottomNavBar(
         Screen.Route,
         Screen.Training
     )
-
+    val color = MaterialTheme.colorScheme.secondary
     NavigationBar (
         modifier = Modifier
             .height(70.dp)
@@ -56,7 +56,7 @@ fun BottomNavBar(
                 val strokeWidth = 3.dp.toPx()
                 val y = 0f
                 drawLine(
-                    color = Gray,
+                    color = color,
                     start = androidx.compose.ui.geometry.Offset(0f, y), // Empieza a la izquierda (x=0) y arriba (y=0)
                     end = androidx.compose.ui.geometry.Offset(size.width, y), // Termina a la derecha (x=ancho total) y arriba (y=0)
                     strokeWidth = strokeWidth

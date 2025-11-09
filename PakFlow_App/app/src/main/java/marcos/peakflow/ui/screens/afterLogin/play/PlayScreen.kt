@@ -300,7 +300,7 @@ fun TopRecordingAppBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp),
-        border = BorderStroke(1.dp, Gray)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary)
     ) {
         Row(
             modifier = Modifier
