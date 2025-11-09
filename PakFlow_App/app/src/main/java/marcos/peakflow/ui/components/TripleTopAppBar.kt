@@ -1,5 +1,6 @@
 package marcos.peakflow.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,10 +36,11 @@ fun TripleTopAppBar(
     rightIcon: Int
 ) {
     Surface(
-        color = Gray,
+        color = MaterialTheme.colorScheme.surfaceVariant,
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp),
+        border = BorderStroke(1.dp, Gray)
     ) {
         Row(
             modifier = Modifier
@@ -54,7 +57,7 @@ fun TripleTopAppBar(
                 Icon(
                     painter = painterResource(id = leftIcon),
                     contentDescription = "leftIcon",
-                    tint = Color.LightGray,
+                    tint = MaterialTheme.colorScheme.onSecondary,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -64,7 +67,7 @@ fun TripleTopAppBar(
                 text = title,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
-                color = Color.LightGray,
+                color = MaterialTheme.colorScheme.onSecondary,
                 modifier = Modifier
                     .weight(3.4f) // Peso mayor para centrar en el espacio disponible
                     .wrapContentWidth(Alignment.CenterHorizontally),
@@ -82,7 +85,7 @@ fun TripleTopAppBar(
                     Icon(
                         painter = painterResource(id = middleIcon),
                         contentDescription = "MiddleIcon",
-                        tint = Color.LightGray,
+                        tint = MaterialTheme.colorScheme.onSecondary,
                         modifier = Modifier.size(21.dp)
                     )
                 }
@@ -90,7 +93,7 @@ fun TripleTopAppBar(
                     Icon(
                         painter = painterResource(id = rightIcon),
                         contentDescription = "RightIcon",
-                        tint = Color.LightGray,
+                        tint = MaterialTheme.colorScheme.onSecondary,
                         modifier = Modifier.size(21.dp)
                     )
                 }

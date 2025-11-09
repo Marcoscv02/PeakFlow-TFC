@@ -26,10 +26,11 @@ import marcos.peakflow.ui.screens.beforeLogin.logueo.login.LoginScreen
 import marcos.peakflow.ui.screens.beforeLogin.logueo.loginWithEmail.LoginWithEmailScreen
 import marcos.peakflow.ui.screens.beforeLogin.registro.registerWithEmail.RegisterWithEmailScreen
 import marcos.peakflow.ui.screens.beforeLogin.registro.signup.SignUpScreen
+import marcos.peakflow.ui.theme.ThemeViewModel
 
 
 @Composable
-fun NavigationWrapper() {
+fun NavigationWrapper( themeViewModel: ThemeViewModel ) {
 
     val navController = rememberNavController()
     val sessionViewModel: SessionViewModel = viewModel()
@@ -120,6 +121,7 @@ fun NavigationWrapper() {
                     navigateToRoute = { navController.navigate(Route) },
                     navigateToTraining = { navController.navigate(Training) },
                     navigateBack = { navController.popBackStack() },
+                    themeViewModel = themeViewModel
                 )
             }
 

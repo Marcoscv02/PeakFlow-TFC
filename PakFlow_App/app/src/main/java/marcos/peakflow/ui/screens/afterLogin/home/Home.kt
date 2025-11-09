@@ -1,13 +1,19 @@
 package marcos.peakflow.ui.screens.afterLogin.home
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import marcos.peakflow.R
 import marcos.peakflow.ui.components.BottomNavBar
 import marcos.peakflow.ui.components.Screen
@@ -41,14 +47,20 @@ fun HomeScreen(
                 navigateToTraining = navigateToTraining
             )
         },
-        containerColor = Black
     ) {
         // Aquí va el contenido principal
         Column (
             modifier = Modifier
                 .fillMaxSize()
-                .background(Black)
+                .background(MaterialTheme.colorScheme.background)
         ){
+
+            Image(
+                painter = painterResource(id = R.drawable.home_imagen),
+                contentDescription = stringResource(R.string.app_logo_description), // Deberías añadir este string a tu strings.xml
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
 
         }
 

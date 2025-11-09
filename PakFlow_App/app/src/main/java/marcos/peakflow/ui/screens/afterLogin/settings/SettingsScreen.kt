@@ -1,8 +1,6 @@
 package marcos.peakflow.ui.screens.afterLogin.settings
 
 
-import androidx.compose.animation.core.copy
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -28,11 +26,10 @@ fun SettingsScreen(
     navigateToRoute: () -> Unit,
     navigateToTraining: () -> Unit,
     navigateBack: () -> Unit,
+    themeViewModel: ThemeViewModel
 ) {
     val context = LocalContext.current
-    // Instancia del ViewModel
-    val themeViewModel: ThemeViewModel = viewModel()
-    //Tema actual
+        //Tema actual
     val currentTheme by themeViewModel.theme.collectAsState()
 
 
@@ -113,13 +110,12 @@ private fun ThemeSwitcherRow(
         Switch(
             checked = isChecked,
             onCheckedChange = { switchIsOn ->
-                // Cuando el switch cambia, determinamos el nuevo tema.
                 val newTheme = if (switchIsOn) Theme.DARK else Theme.LIGHT
-                onThemeChange(newTheme) // Llamamos a la función del ViewModel
+                onThemeChange(newTheme)
             },
             colors = SwitchDefaults.colors(
-                checkedThumbColor = RedPeakFlow, // Color del pulgar cuando está activo (rojo)
-                checkedTrackColor = RedPeakFlow.copy(alpha = 0.5f), // Color de la pista
+                checkedThumbColor = RedPeakFlow,
+                checkedTrackColor = RedPeakFlow.copy(alpha = 0.5f),
                 uncheckedThumbColor = MaterialTheme.colorScheme.onSurface,
                 uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
             )

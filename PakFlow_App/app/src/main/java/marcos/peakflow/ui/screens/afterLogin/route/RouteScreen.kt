@@ -5,6 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,13 +52,14 @@ fun RouteScreen(
         Column (
             modifier = Modifier
                 .fillMaxSize()
-                .background(Black)
+                .background(MaterialTheme.colorScheme.background)
         ){
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = "NOT YET IMPLEMENTED",
                 textAlign = TextAlign.Center,
-                color = Color.LightGray
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.weight(1f))
 

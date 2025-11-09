@@ -1,5 +1,6 @@
 package marcos.peakflow.ui.theme
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,5 +19,6 @@ class ThemeViewModel: ViewModel() {
 
     fun changeTheme (newTheme: Theme){
         _theme.value = newTheme
+        Log.i("ThemeViewModel", "Changed theme to ${newTheme.name}")
     }
 }

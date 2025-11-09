@@ -9,7 +9,7 @@ import io.github.jan.supabase.postgrest.Postgrest
 import marcos.peakflow.BuildConfig
 import marcos.peakflow.data.RepositoryContainer
 
-class PeakFlowApp : Application() {
+class   PeakFlowApp : Application() {
 
     companion object {
         private lateinit var instance: PeakFlowApp

@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavigationWrapper()
+                    NavigationWrapper(themeViewModel = themeViewModel)
                 }
             }
         }

@@ -48,7 +48,8 @@
     <string name="training">Mis Entrenos</string>
 
     <!--Home-->
-    <string name="homeTitleScreen">Inicio</string>
+    <string name="homeTitleScreen">PeakFlow</string>
+    <string name="app_logo_description">Home-Imagen</string>
 
     <!--UserPanel-->
     <string name="userName">Nombre usuario</string>
@@ -67,6 +68,7 @@
     <string name="cancel">Cancelar</string>
     <string name="routeNamePlaceholder">Nombre de la ruta</string>
     <string name="routeName">Ingresa un nombre para tu ruta</string>
+    <string name="sportRun">carrera</string>
 
     <!--Route-->
     <string name="routeTitleScreen">Seguir Ruta</string>

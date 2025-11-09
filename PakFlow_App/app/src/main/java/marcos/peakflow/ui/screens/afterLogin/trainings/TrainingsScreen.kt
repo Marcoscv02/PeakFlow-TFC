@@ -83,6 +83,7 @@ fun TrainingsScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(0.dp, 40.dp)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             when {
                 uiState.isLoading -> {
@@ -143,7 +144,7 @@ fun TrainingItem(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable{onItemClick()},
-        colors = CardDefaults.cardColors(containerColor = Gray)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column {
             // Sección de datos del entrenamiento

@@ -1,5 +1,6 @@
 package marcos.peakflow.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -31,10 +31,11 @@ fun StandardTopAppBar(
     rightIcon:Int
 ) {
     Surface(
-        color = Gray,
+        color = MaterialTheme.colorScheme.surfaceVariant,
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp),
+        border = BorderStroke(1.dp, Gray)
     ) {
         Row(
             modifier = Modifier
@@ -47,7 +48,7 @@ fun StandardTopAppBar(
                 Icon(
                     painter = painterResource(id = leftIcon),
                     contentDescription = "leftIcon",
-                    tint = Color.LightGray,
+                    tint = MaterialTheme.colorScheme.onSecondary,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -57,14 +58,14 @@ fun StandardTopAppBar(
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
-                color = Color.LightGray,
+                color = MaterialTheme.colorScheme.onSecondary,
             )
 
             IconButton(onClick = onRightClick) {
                 Icon(
                     painter = painterResource(id = rightIcon),
                     contentDescription = "RightIcon",
-                    tint = Color.LightGray,
+                    tint = MaterialTheme.colorScheme.onSecondary,
                     modifier = Modifier.size(23.dp)
                 )
             }

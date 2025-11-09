@@ -5,6 +5,7 @@ package marcos.peakflow.ui.screens.afterLogin.play
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -35,6 +36,9 @@ import marcos.peakflow.ui.components.StandardTopAppBar
 import marcos.peakflow.ui.screens.PeakFlowViewModelFactory
 import marcos.peakflow.ui.theme.Black
 import marcos.peakflow.ui.theme.Gray
+import marcos.peakflow.ui.theme.GreenSuccess
+import marcos.peakflow.ui.theme.OrangeWarning
+import marcos.peakflow.ui.theme.RedError
 import org.maplibre.android.MapLibre
 import org.maplibre.android.WellKnownTileServer
 import org.maplibre.android.annotations.PolylineOptions
@@ -114,6 +118,7 @@ fun PlayScreen(
         Column (
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
         ){
             if (hasPermission) {
                 MapLibreLocationView(viewModel)
@@ -291,10 +296,11 @@ fun TopRecordingAppBar(
     onPlayPauseClick: () -> Unit
 ){
     Surface(
-        color = Gray,
+        color = MaterialTheme.colorScheme.surfaceVariant,
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp),
+        border = BorderStroke(1.dp, Gray)
     ) {
         Row(
             modifier = Modifier
@@ -307,24 +313,24 @@ fun TopRecordingAppBar(
                 Icon(
                     painter = painterResource(id = R.drawable.running),
                     contentDescription = "leftIcon",
-                    tint = Color.LightGray,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(80.dp)
                 )
             }
 
             Text(
-                text = "Carrera",
+                text = stringResource(R.string.sportRun),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
-                color = Color.LightGray,
+                color = MaterialTheme.colorScheme.onSecondary,
             )
 
             IconButton(onClick = onPlayPauseClick, enabled = enabled) {
                 Icon(
                     painter = if (!isRunning) painterResource(R.drawable.play) else painterResource(R.drawable.pause),
                     contentDescription = "RightIcon",
-                    tint = if (!isRunning) Color.Green else Color.Red,
+                    tint = if (!isRunning) GreenSuccess else RedError,
                     modifier = Modifier.size(40.dp)
                 )
             }
@@ -407,7 +413,7 @@ fun DataPanel(
 fun StatBlock(label: String, value: String, fontSize: TextUnit = 24.sp) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(text = label, fontSize = 12.sp, color = Color.Gray)
-        Text(text = value, fontSize = fontSize, fontWeight = FontWeight.Bold, color = Color.White)
+        Text(text = value, fontSize = fontSize, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
     }
 }
 
@@ -434,7 +440,7 @@ fun SaveRouteDialog(
             title = {
                 Text(
                     text = stringResource(R.string.saveRoute),
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold
                 )
             },
@@ -442,7 +448,7 @@ fun SaveRouteDialog(
                 Column {
                     Text(
                         text = stringResource(R.string.routeName),
-                        color = Color.White.copy(alpha = 0.8f)
+                        color = MaterialTheme.colorScheme.onSecondary
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     OutlinedTextField(
@@ -453,13 +459,13 @@ fun SaveRouteDialog(
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
-                            focusedLabelColor = Color.White,
-                            unfocusedLabelColor = Color.White.copy(alpha = 0.6f),
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
-                            cursorColor = Color.White,
-                            focusedIndicatorColor = Color.White,
-                            unfocusedIndicatorColor = Color.White.copy(alpha = 0.6f)
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onSecondary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSecondary,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSecondary,
+                            cursorColor = MaterialTheme.colorScheme.onSecondary,
+                            focusedIndicatorColor = MaterialTheme.colorScheme.onSecondary,
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.onSecondary
                         )
                     )
                 }
@@ -468,20 +474,20 @@ fun SaveRouteDialog(
                 TextButton(
                     onClick = { if (routeName.isNotBlank()) onConfirm(routeName) },
                     enabled = routeName.isNotBlank()
-                ) { Text(stringResource(R.string.save), color = Color.White) }
+                ) { Text(stringResource(R.string.save), color = MaterialTheme.colorScheme.onBackground) }
             },
             dismissButton = {
                 Row {
                     TextButton(onClick = onDiscard) {
-                        Text("Descartar", color = Color.Yellow)
+                        Text("Descartar", color = OrangeWarning)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     TextButton(onClick = onDismiss) {
-                        Text(stringResource(R.string.cancel), color = Color.Red)
+                        Text(stringResource(R.string.cancel), color = RedError)
                     }
                 }
             },
-            containerColor = Gray,
+            containerColor = MaterialTheme.colorScheme.secondary,
             shape = MaterialTheme.shapes.medium
         )
     }

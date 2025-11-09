@@ -1,12 +1,17 @@
 package marcos.peakflow.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -14,9 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import marcos.peakflow.R
-import marcos.peakflow.ui.theme.BackgoundNavSelectedButton
 import marcos.peakflow.ui.theme.Gray
-import marcos.peakflow.ui.theme.RedPeakFlow
 
 // Definimos una clase sellada para representar cada ruta
 sealed class Screen(
@@ -48,11 +51,20 @@ fun BottomNavBar(
     NavigationBar (
         modifier = Modifier
             .height(70.dp)
-            .background(color = Gray)
-            .padding(horizontal = 5.dp)
-        ,
-        containerColor = Gray,
-        tonalElevation = 0.dp
+            .fillMaxWidth()
+            .drawBehind {
+                val strokeWidth = 3.dp.toPx()
+                val y = 0f
+                drawLine(
+                    color = Gray,
+                    start = androidx.compose.ui.geometry.Offset(0f, y), // Empieza a la izquierda (x=0) y arriba (y=0)
+                    end = androidx.compose.ui.geometry.Offset(size.width, y), // Termina a la derecha (x=ancho total) y arriba (y=0)
+                    strokeWidth = strokeWidth
+                )
+            },
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        tonalElevation = 0.dp,
+
     ){
         items.forEach { screen ->
             NavigationBarItem(
@@ -81,11 +93,11 @@ fun BottomNavBar(
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = BackgoundNavSelectedButton ,     // Fondo del ítem seleccionado
-                    selectedIconColor = RedPeakFlow,     // Color del ícono seleccionado
-                    unselectedIconColor = Color.LightGray,
-                    selectedTextColor = RedPeakFlow,
-                    unselectedTextColor = Color.LightGray
+                    indicatorColor = Color.Transparent, // <-- El truco para quitar la "barrita"
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSecondary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSecondary
                 )
             )
         }

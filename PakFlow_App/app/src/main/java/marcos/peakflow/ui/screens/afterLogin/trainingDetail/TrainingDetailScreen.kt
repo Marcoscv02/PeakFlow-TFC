@@ -54,8 +54,9 @@ import marcos.peakflow.ui.components.BottomNavBar
 import marcos.peakflow.ui.components.Screen
 import marcos.peakflow.ui.components.StandardTopAppBar
 import marcos.peakflow.ui.screens.PeakFlowViewModelFactory
-import marcos.peakflow.ui.theme.Black
+
 import marcos.peakflow.ui.theme.Gray
+import marcos.peakflow.ui.theme.RedPeakFlow
 import org.maplibre.android.MapLibre
 import org.maplibre.android.WellKnownTileServer
 import org.maplibre.android.annotations.PolylineOptions
@@ -113,7 +114,7 @@ fun TrainingDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Black)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -185,10 +186,10 @@ fun TrainingDetailsContent(route: Route) {
         // Título del entrenamiento: Si es nulo, muestra "Entrenamiento"
         Text(
             text = route.name ?: stringResource(R.string.trainingName),
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         // Fecha del entrenamiento
@@ -208,13 +209,13 @@ fun TrainingDetailsContent(route: Route) {
             leftMetric = MetricItem(
                 title = stringResource(R.string.distance),
                 value = formatDistance(route.distance),
-                color = Color(0xFF4FC3F7) // Azul claro
+                color = RedPeakFlow
             ),
             // Tiempo en movimiento
             rightMetric = MetricItem(
                 title = stringResource(R.string.movTime),
-                value = formatSecondsToTime(route.movingSec),
-                color = Color(0xFF81C784) // Verde claro
+                value = formatSecondsToTime(route.durationSec),
+                color = RedPeakFlow
             )
         )
 
@@ -224,16 +225,14 @@ fun TrainingDetailsContent(route: Route) {
             // Velocidad media
             leftMetric = MetricItem(
                 title = stringResource(R.string.avgSpeed),
-                // Formateamos para que muestre " min/km"
                 value = "${msToMinPerKm(route.avgSpeed)} min/km",
-                color = Color(0xFFFFB74D) // Naranja
+                color = RedPeakFlow
             ),
             // Tiempo total del entrenamiento
             rightMetric = MetricItem(
                 title = stringResource(R.string.totalTime),
-                // ¡CORRECCIÓN CLAVE! Usamos durationSec que ya tienes.
                 value = formatSecondsToTime(route.durationSec),
-                color = Color(0xFF9575CD) // Púrpura claro
+                color = RedPeakFlow
             )
         )
 
@@ -243,16 +242,14 @@ fun TrainingDetailsContent(route: Route) {
             // Desnivel positivo
             leftMetric = MetricItem(
                 title = stringResource(R.string.desPos),
-                // ¡CORRECCIÓN CLAVE! Manejamos el valor nulo y añadimos las unidades "m".
                 value = route.elevationGain?.let { "%.0fm".format(it) } ?: "---",
-                color = Color(0xFF4DB6AC) // Verde azulado
+                color = RedPeakFlow
             ),
             // Ritmo cardiaco medio
             rightMetric = MetricItem(
                 title = stringResource(R.string.heartRate),
-                // ¡CORRECCIÓN CLAVE! Manejamos el valor nulo.
                 value = route.avgHeartRate?.let { "%.0f".format(it) } ?: "---",
-                color = Color(0xFFF06292) // Rosa
+                color = RedPeakFlow
             )
         )
 
@@ -280,7 +277,7 @@ fun MetricCard(metric: MetricItem, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .background(
-                color = Color(0xFF1E1E1E),
+                color = MaterialTheme.colorScheme.secondary,
                 shape = MaterialTheme.shapes.medium
             )
             .padding(16.dp),
@@ -288,7 +285,7 @@ fun MetricCard(metric: MetricItem, modifier: Modifier = Modifier) {
     ) {
         Text(
             text = metric.title,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 14.sp,
             textAlign = TextAlign.Center
         )
